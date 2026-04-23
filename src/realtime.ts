@@ -140,9 +140,17 @@ export function subscribePlayers(
       ...(payload as RoomParticipant),
     }));
     list.sort((a, b) => {
+      const aAttempts = Number(a.attempts ?? 0);
+      const bAttempts = Number(b.attempts ?? 0);
+      const aElapsed = Number(a.elapsedSeconds ?? 0);
+      const bElapsed = Number(b.elapsedSeconds ?? 0);
+
+      // 1) Daha az deneme her zaman daha üstte.
+      if (aAttempts !== bAttempts) return aAttempts - bAttempts;
+      // 2) Aynı denemede çözen oyuncu, çözmeyenden üstte.
       if (a.solved !== b.solved) return a.solved ? -1 : 1;
-      if (a.attempts !== b.attempts) return a.attempts - b.attempts;
-      return a.elapsedSeconds - b.elapsedSeconds;
+      // 3) Eşitlikte daha kısa süre üstte.
+      return aElapsed - bElapsed;
     });
     onChange(list);
   });
