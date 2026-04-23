@@ -534,6 +534,13 @@ export default function App() {
           >
             Oyuna Başla
           </button>
+          <button
+            type="button"
+            onClick={() => setChallengeOpen(true)}
+            className="mt-2 w-full rounded bg-cyan-700 px-4 py-3 text-sm font-semibold text-white"
+          >
+            Arkadaşına Meydan Oku
+          </button>
         </section>
       )}
 
@@ -641,7 +648,7 @@ export default function App() {
       </section>
 
       <section className="grid gap-2 rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-3">
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
             onClick={shareResult}
@@ -656,13 +663,6 @@ export default function App() {
             className="rounded bg-indigo-600 px-4 py-3 text-sm font-semibold text-white"
           >
             Yeni Oyun
-          </button>
-          <button
-            type="button"
-            onClick={() => setChallengeOpen(true)}
-            className="rounded bg-cyan-700 px-4 py-3 text-sm font-semibold text-white"
-          >
-            Meydan Oku
           </button>
         </div>
       </section>
