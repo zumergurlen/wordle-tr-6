@@ -1,16 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { RAW_WORDS } from "./words";
 
-const WORD_LENGTH = 6;
+const WORD_LENGTH_OPTIONS = [5, 6, 7, 8] as const;
 const MAX_GUESSES = 6;
 
-const DICTIONARY = Array.from(
-  new Set(
-    RAW_WORDS.map((word) => word.toLocaleUpperCase("tr-TR")).filter(
-      (word) => [...word].length === WORD_LENGTH,
-    ),
-  ),
-);
+const WORDS_BY_LENGTH = RAW_WORDS.reduce<Record<number, string[]>>((acc, raw) => {
+  const word = raw.toLocaleUpperCase("tr-TR");
+  const len = [...word].length;
+  if (!WORD_LENGTH_OPTIONS.includes(len as (typeof WORD_LENGTH_OPTIONS)[number])) {
+    return acc;
+  }
+  acc[len] = acc[len] ?? [];
+  if (!acc[len].includes(word)) acc[len].push(word);
+  return acc;
+}, {});
 
 const TURKISH_KEYS = [
   ["E", "R", "T", "Y", "U", "I", "O", "P", "Ğ", "Ü"],
@@ -41,6 +44,7 @@ const INITIAL_STATS: GameStats = {
 };
 
 function getDailyWord(words: string[]) {
+  if (!words.length) return "KELIME";
   const dayIndex = Math.floor(Date.now() / 86400000);
   return words[dayIndex % words.length];
 }
@@ -69,7 +73,7 @@ function decodeWord(encoded: string) {
 }
 
 function evaluateGuess(guess: string, answer: string): LetterState[] {
-  const result: LetterState[] = Array(WORD_LENGTH).fill("absent");
+  const result: LetterState[] = Array(answer.length).fill("absent");
   const answerLetters = answer.split("");
   const guessLetters = guess.split("");
 
@@ -127,25 +131,43 @@ export default function App() {
     const encoded = params.get("challenge");
     if (!encoded) return null;
     const decoded = decodeWord(encoded);
-    if (!decoded || decoded.length !== WORD_LENGTH) return null;
+    if (
+      !decoded ||
+      !WORD_LENGTH_OPTIONS.includes(decoded.length as (typeof WORD_LENGTH_OPTIONS)[number])
+    ) {
+      return null;
+    }
     return decoded;
   }, []);
 
-  const targetWord = challengeWord ?? getDailyWord(DICTIONARY);
+  const [wordLength, setWordLength] = useState<number>(challengeWord?.length ?? 6);
+  const [hasStarted, setHasStarted] = useState<boolean>(Boolean(challengeWord));
+  const dictionaryForLength = useMemo(
+    () => WORDS_BY_LENGTH[wordLength] ?? WORDS_BY_LENGTH[6] ?? [],
+    [wordLength],
+  );
+  const targetWord = challengeWord ?? getDailyWord(dictionaryForLength);
   const playableWords = useMemo(
-    () => new Set([...DICTIONARY, targetWord]),
-    [targetWord],
+    () => new Set([...(dictionaryForLength ?? []), targetWord]),
+    [dictionaryForLength, targetWord],
   );
 
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState("");
-  const [message, setMessage] = useState("6 harfli kelimeyi bul.");
+  const [message, setMessage] = useState(`${wordLength} harfli kelimeyi bul.`);
   const [customWord, setCustomWord] = useState("");
   const resultSavedRef = useRef(false);
 
   const won = guesses.some((guess) => guess === targetWord);
   const lost = guesses.length >= MAX_GUESSES && !won;
   const finished = won || lost;
+
+  useEffect(() => {
+    setMessage(`${wordLength} harfli kelimeyi bul.`);
+    setGuesses([]);
+    setCurrentGuess("");
+    resultSavedRef.current = false;
+  }, [wordLength, targetWord]);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -224,7 +246,7 @@ export default function App() {
 
   function addLetter(letter: string) {
     if (finished) return;
-    if (currentGuess.length >= WORD_LENGTH) return;
+    if (currentGuess.length >= wordLength) return;
     setCurrentGuess((prev) => prev + letter);
   }
 
@@ -235,11 +257,12 @@ export default function App() {
 
   function submitGuess() {
     if (finished) return;
-    if (currentGuess.length !== WORD_LENGTH) {
-      setMessage(`Kelime ${WORD_LENGTH} harfli olmalı.`);
+    if (currentGuess.length !== wordLength) {
+      setMessage(`Kelime ${wordLength} harfli olmalı.`);
       return;
     }
-    if (!/^[A-ZÇĞİIÖŞÜ]{6}$/u.test(currentGuess)) {
+    const dynamicLetterRegex = new RegExp(`^[A-ZÇĞİIÖŞÜ]{${wordLength}}$`, "u");
+    if (!dynamicLetterRegex.test(currentGuess)) {
       setMessage("Sadece harf kullanabilirsin.");
       return;
     }
@@ -278,8 +301,8 @@ export default function App() {
   function shareResult() {
     const score = won ? guesses.findIndex((g) => g === targetWord) + 1 : "X";
     const header = challengeWord
-      ? `WordleTR Meydan ${score}/${MAX_GUESSES}`
-      : `WordleTR Günlük ${score}/${MAX_GUESSES}`;
+      ? `WordleTR Meydan ${wordLength}H ${score}/${MAX_GUESSES}`
+      : `WordleTR Günlük ${wordLength}H ${score}/${MAX_GUESSES}`;
     const rows = guesses
       .map((guess) =>
         evaluateGuess(guess, targetWord)
@@ -298,8 +321,8 @@ export default function App() {
 
   function createChallengeLink() {
     const word = normalize(customWord);
-    if (word.length !== WORD_LENGTH) {
-      setMessage(`${WORD_LENGTH} harfli bir kelime gir.`);
+    if (word.length !== wordLength) {
+      setMessage(`${wordLength} harfli bir kelime gir.`);
       return;
     }
     const encoded = encodeWord(word);
@@ -314,7 +337,20 @@ export default function App() {
     setGuesses([]);
     setCurrentGuess("");
     resultSavedRef.current = false;
-    setMessage("Yeni oyun basladi. 6 harfli kelimeyi bul.");
+    setMessage(`Yeni oyun basladi. ${wordLength} harfli kelimeyi bul.`);
+  }
+
+  function changeWordLength(nextLen: number) {
+    if (challengeWord) return;
+    setWordLength(nextLen);
+  }
+
+  function startGame() {
+    setHasStarted(true);
+    setGuesses([]);
+    setCurrentGuess("");
+    resultSavedRef.current = false;
+    setMessage(`${wordLength} harfli kelimeyi bul.`);
   }
 
   const winRate = stats.played ? Math.round((stats.wins / stats.played) * 100) : 0;
@@ -344,17 +380,55 @@ export default function App() {
         </p>
       </header>
 
-      <section className="rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-3 shadow-sm">
+      {!hasStarted && !challengeWord && (
+        <section className="rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-4 shadow-sm">
+          <h2 className="mb-2 text-center text-base font-bold">Oyun Ayari</h2>
+          <p className="mb-3 text-center text-xs text-[hsl(var(--muted))]">
+            Harf sayisini sec, sonra oyuna basla.
+          </p>
+          <div className="mb-3 flex justify-center gap-1">
+            {WORD_LENGTH_OPTIONS.map((len) => (
+              <button
+                key={len}
+                type="button"
+                onClick={() => changeWordLength(len)}
+                className={`rounded px-3 py-2 text-xs font-semibold ${
+                  wordLength === len
+                    ? "bg-cyan-700 text-white"
+                    : "bg-[hsl(var(--surface2))] text-[hsl(var(--text))]"
+                }`}
+              >
+                {len} Harf
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={startGame}
+            className="w-full rounded bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+          >
+            Oyuna Basla
+          </button>
+        </section>
+      )}
+
+      {hasStarted && (
+        <>
+          <section className="rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-3 shadow-sm">
         <p className="mb-2 text-center text-sm text-emerald-500">{message}</p>
         <div className="grid grid-rows-6 gap-2">
           {board.map((row, rowIdx) => {
             const states =
-              row.length === WORD_LENGTH && rowIdx < guesses.length
+              row.length === wordLength && rowIdx < guesses.length
                 ? evaluateGuess(row, targetWord)
                 : [];
             return (
-              <div key={rowIdx} className="grid grid-cols-6 gap-1.5">
-                {Array.from({ length: WORD_LENGTH }).map((_, colIdx) => {
+              <div
+                key={rowIdx}
+                className="grid gap-1.5"
+                style={{ gridTemplateColumns: `repeat(${wordLength}, minmax(0, 1fr))` }}
+              >
+                {Array.from({ length: wordLength }).map((_, colIdx) => {
                   const letter = row[colIdx] ?? "";
                   const state = states[colIdx] ?? "unknown";
                   const color =
@@ -434,6 +508,8 @@ export default function App() {
           </button>
         </div>
       </section>
+        </>
+      )}
 
       {statsOpen && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/60 p-4">
@@ -486,14 +562,14 @@ export default function App() {
               </button>
             </div>
             <p className="mb-3 text-xs text-[hsl(var(--muted))]">
-              6 harfli kelime gir. Link olusunca arkadasina gonder.
+              {wordLength} harfli kelime gir. Link olusunca arkadasina gonder.
             </p>
             <div className="flex gap-2">
               <input
                 value={customWord}
                 onChange={(event) => setCustomWord(event.target.value)}
-                maxLength={WORD_LENGTH}
-                placeholder="6 harfli kelime"
+                maxLength={wordLength}
+                placeholder={`${wordLength} harfli kelime`}
                 className="w-full rounded border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-2 text-sm outline-none"
               />
               <button
