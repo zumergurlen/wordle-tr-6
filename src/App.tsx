@@ -794,7 +794,11 @@ export default function App() {
                   {p.id === room.hostId ? " (Admin)" : ""}
                 </span>
                 <span className="text-[hsl(var(--muted))]">
-                  {p.solved ? `Çözdü • ${p.elapsedSeconds}s` : `${p.attempts} deneme`}
+                  {p.solved
+                    ? `${p.attempts}. deneme • ${Math.floor(p.elapsedSeconds / 60)}:${String(
+                        p.elapsedSeconds % 60,
+                      ).padStart(2, "0")}`
+                    : `${p.attempts} deneme • çözmedi`}
                 </span>
               </div>
             ))}

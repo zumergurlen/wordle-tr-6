@@ -145,11 +145,11 @@ export function subscribePlayers(
       const aElapsed = Number(a.elapsedSeconds ?? 0);
       const bElapsed = Number(b.elapsedSeconds ?? 0);
 
-      // 1) Daha az deneme her zaman daha üstte.
-      if (aAttempts !== bAttempts) return aAttempts - bAttempts;
-      // 2) Aynı denemede çözen oyuncu, çözmeyenden üstte.
+      // 1) Çözenler daima üstte.
       if (a.solved !== b.solved) return a.solved ? -1 : 1;
-      // 3) Eşitlikte daha kısa süre üstte.
+      // 2) Çözenler arasında daha az deneme üstte.
+      if (aAttempts !== bAttempts) return aAttempts - bAttempts;
+      // 3) Aynı denemede daha kısa süre üstte.
       return aElapsed - bElapsed;
     });
     onChange(list);
