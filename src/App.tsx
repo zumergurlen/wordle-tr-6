@@ -62,7 +62,7 @@ const KB_SCALE_KEY = "wordle-tr6-keyboard-scale";
 const KB_MIN = 1.0;
 const KB_MAX = 1.9;
 const KB_STEP = 0.08;
-const KB_DEFAULT = 1.5;
+const KB_DEFAULT = 1.0;
 
 const INITIAL_STATS: GameStats = {
   played: 0,
@@ -921,7 +921,7 @@ export default function App() {
                   style={{
                     minHeight: `${42 + scaleDelta * 8}px`,
                     flex: `${isActionKey ? 1.45 : 1} 1 0`,
-                    fontSize: `${(isActionKey ? 10.5 : 13) + scaleDelta * 2}px`,
+                    fontSize: `${(key === "ENTER" ? 15 : key === "SİL" ? 11.5 : 13) + scaleDelta * 2}px`,
                     paddingInline: `${8 + scaleDelta * 8}px`,
                     paddingBlock: `${10 + scaleDelta * 2}px`,
                   }}
