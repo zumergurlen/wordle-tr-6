@@ -312,8 +312,8 @@ export default function App() {
   function shareResult() {
     const score = won ? guesses.findIndex((g) => g === targetWord) + 1 : "X";
     const header = challengeWord
-      ? `WordleTR Meydan ${wordLength}H ${score}/${MAX_GUESSES}`
-      : `WordleTR Günlük ${wordLength}H ${score}/${MAX_GUESSES}`;
+      ? `Kelime Oyunu Meydan ${wordLength}H ${score}/${MAX_GUESSES}`
+      : `Kelime Oyunu Günlük ${wordLength}H ${score}/${MAX_GUESSES}`;
     const rows = guesses
       .map((guess) =>
         evaluateGuess(guess, targetWord)
@@ -385,7 +385,7 @@ export default function App() {
           >
             İstatistik
           </button>
-          <h1 className="text-xl font-bold sm:text-2xl">WORDLE TR</h1>
+          <h1 className="text-xl font-bold sm:text-2xl">KELİME OYUNU</h1>
           <button
             type="button"
             onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
