@@ -62,7 +62,7 @@ const KB_SCALE_KEY = "wordle-tr6-keyboard-scale";
 const KB_MIN = 1.0;
 const KB_MAX = 1.9;
 const KB_STEP = 0.08;
-const KB_DEFAULT = 1.3;
+const KB_DEFAULT = 1.15;
 
 const INITIAL_STATS: GameStats = {
   played: 0,
@@ -850,7 +850,7 @@ export default function App() {
         </section>
       )}
 
-      <section className="sticky bottom-0 z-10 space-y-2 rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))]/95 p-3 backdrop-blur">
+      <section className="sticky bottom-[max(env(safe-area-inset-bottom),8px)] z-10 space-y-2 rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))]/95 p-3 backdrop-blur">
         <div className="mb-1 flex items-center justify-between text-xs">
           <span className="text-[hsl(var(--muted))]">Klavye Boyutu</span>
           <div className="flex items-center gap-1">
@@ -872,9 +872,10 @@ export default function App() {
           </div>
         </div>
         {TURKISH_KEYS.map((row, idx) => (
-          <div key={idx} className="flex justify-center gap-1">
+          <div key={idx} className="flex w-full gap-1">
             {row.map((key) => {
               const state = keyStates.get(key) ?? "unknown";
+              const isActionKey = key === "ENTER" || key === "SİL";
               const color =
                 state === "correct"
                   ? "bg-green-600 text-white"
@@ -890,12 +891,12 @@ export default function App() {
                   onClick={() => handleVirtualKey(key)}
                   style={{
                     minHeight: `${48 * keyboardScale}px`,
-                    minWidth: `${(key === "ENTER" || key === "SİL" ? 62 : 32) * keyboardScale}px`,
+                    flex: `${isActionKey ? 1.45 : 1} 1 0`,
                     fontSize: `${13 * keyboardScale}px`,
-                    paddingInline: `${9 * keyboardScale}px`,
+                    paddingInline: `${7 * keyboardScale}px`,
                     paddingBlock: `${10 * keyboardScale}px`,
                   }}
-                  className={`rounded font-semibold transition duration-100 active:scale-95 active:brightness-75 ${color}`}
+                  className={`min-w-0 rounded font-semibold transition duration-100 active:scale-95 active:brightness-75 ${color}`}
                 >
                   {key}
                 </button>
