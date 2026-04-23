@@ -499,6 +499,12 @@ export default function App() {
         wordLength,
         targetWord: roomWord,
       });
+      setGuesses([]);
+      setCurrentGuess("");
+      setElapsedSeconds(0);
+      setLoseModalOpen(false);
+      setConfettiPieces([]);
+      resultSavedRef.current = false;
       setRoomCodeInput(created.code);
       setHasStarted(true);
       setMessage(`Canlı oda açıldı: ${created.code}`);
@@ -535,6 +541,12 @@ export default function App() {
         targetWord: joined.targetWord,
       });
       setWordLength(joined.wordLength);
+      setGuesses([]);
+      setCurrentGuess("");
+      setElapsedSeconds(0);
+      setLoseModalOpen(false);
+      setConfettiPieces([]);
+      resultSavedRef.current = false;
       setHasStarted(true);
       setMessage(`Canlı odaya katıldın: ${joined.code}`);
     } catch {
