@@ -359,7 +359,8 @@ export default function App() {
   }
 
   function shareResult() {
-    const score = won ? guesses.findIndex((g) => g === targetWord) + 1 : "X";
+    const solvedAt = won ? guesses.findIndex((g) => g === targetWord) + 1 : null;
+    const score = solvedAt ?? "X";
     const header = challengeWord
       ? `Kelime Oyunu Meydan ${wordLength}H ${score}/${MAX_GUESSES}`
       : `Kelime Oyunu Günlük ${wordLength}H ${score}/${MAX_GUESSES}`;
@@ -373,7 +374,11 @@ export default function App() {
       )
       .join("\n");
 
-    const text = `${header}\n${rows}\n${window.location.href}`;
+    const guessesText = guesses.map((guess, idx) => `${idx + 1}. ${guess}`).join("\n");
+    const detailLine = solvedAt
+      ? `Deneme: ${solvedAt}/${MAX_GUESSES} | Süre: ${timerText}`
+      : `Deneme: ${guesses.length}/${MAX_GUESSES} | Süre: ${timerText}`;
+    const text = `${header}\n${detailLine}\n\nTahminler:\n${guessesText}\n\n${rows}\n${window.location.href}`;
     navigator.clipboard.writeText(text).then(() => {
       setMessage("Sonuç panoya kopyalandı.");
     });
