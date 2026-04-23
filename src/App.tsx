@@ -472,7 +472,7 @@ export default function App() {
     const encoded = encodeWord(word);
     const url = `${window.location.origin}${window.location.pathname}?challenge=${encoded}`;
     navigator.clipboard.writeText(url).then(() => {
-      showToast("Meydan okuma linki panoya kopyalandı");
+      showToast("MEYDAN OKUMA LİNKİ PANOYA KOPYALANDI.");
       setChallengeOpen(false);
     });
   }
@@ -625,7 +625,7 @@ export default function App() {
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-4 bg-[hsl(var(--bg))] px-3 pb-[max(env(safe-area-inset-bottom),12px)] pt-4 text-[hsl(var(--text))] sm:px-4">
       {toastText && (
         <div className="pointer-events-none fixed left-1/2 top-1/2 z-40 -translate-x-1/2 -translate-y-1/2">
-          <div className="rounded-2xl border border-white/35 bg-black/90 px-6 py-3 text-lg font-bold text-white shadow-2xl sm:text-2xl">
+          <div className="rounded-2xl border border-white/35 bg-black/90 px-6 py-3 text-lg font-bold uppercase tracking-wide text-white shadow-2xl sm:text-2xl">
             {toastText}
           </div>
         </div>
