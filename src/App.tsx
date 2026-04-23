@@ -484,7 +484,7 @@ export default function App() {
     setLoseModalOpen(false);
     setConfettiPieces([]);
     resultSavedRef.current = false;
-    setMessage(`Yeni oyun basladi. ${wordLength} harfli kelimeyi bul.`);
+    setMessage(`Yeni oyun başladı. ${wordLength} harfli kelimeyi bul.`);
   }
 
   function changeWordLength(nextLen: number) {
@@ -625,7 +625,7 @@ export default function App() {
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-4 bg-[hsl(var(--bg))] px-3 pb-[max(env(safe-area-inset-bottom),12px)] pt-4 text-[hsl(var(--text))] sm:px-4">
       {toastText && (
         <div className="pointer-events-none fixed left-1/2 top-1/2 z-40 -translate-x-1/2 -translate-y-1/2">
-          <div className="rounded-2xl border border-emerald-400/40 bg-zinc-900/95 px-6 py-3 text-base font-semibold text-emerald-300 shadow-2xl sm:text-lg">
+          <div className="rounded-2xl border border-white/35 bg-black/90 px-6 py-3 text-lg font-bold text-white shadow-2xl sm:text-2xl">
             {toastText}
           </div>
         </div>
@@ -906,7 +906,9 @@ export default function App() {
                     ? "bg-yellow-600 text-white"
                     : state === "absent"
                       ? "bg-zinc-800 text-zinc-400"
-                      : "bg-zinc-500 text-white";
+                      : isActionKey
+                        ? "bg-zinc-700 text-zinc-100"
+                        : "bg-zinc-500 text-white";
               return (
                 <button
                   key={key}
@@ -921,7 +923,7 @@ export default function App() {
                   style={{
                     minHeight: `${42 + scaleDelta * 8}px`,
                     flex: `${isActionKey ? 1.45 : 1} 1 0`,
-                    fontSize: `${(isActionKey ? 11.5 : 13) + scaleDelta * 2}px`,
+                    fontSize: `${(isActionKey ? 10.5 : 13) + scaleDelta * 2}px`,
                     paddingInline: `${8 + scaleDelta * 8}px`,
                     paddingBlock: `${10 + scaleDelta * 2}px`,
                   }}
