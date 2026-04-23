@@ -160,6 +160,7 @@ export default function App() {
   });
 
   const [statsOpen, setStatsOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [challengeOpen, setChallengeOpen] = useState(false);
   const [loseModalOpen, setLoseModalOpen] = useState(false);
   const [confettiPieces, setConfettiPieces] = useState<ConfettiPiece[]>([]);
@@ -663,9 +664,9 @@ export default function App() {
           ) : (
             <button
               type="button"
-              onClick={() => setStatsOpen(true)}
-              aria-label="İstatistikleri aç"
-              title="İstatistikler"
+              onClick={() => setHelpOpen(true)}
+              aria-label="Nasıl oynanır yardımını aç"
+              title="Nasıl Oynanır?"
               className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] text-base font-bold text-[hsl(var(--text))]"
             >
               ?
@@ -968,6 +969,95 @@ export default function App() {
         </div>
       </section>
         </>
+      )}
+
+      {helpOpen && (
+        <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-sm rounded-3xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-5 text-center">
+            <h2 className="text-3xl font-extrabold">NASIL OYNANIR?</h2>
+            <p className="mt-5 text-base leading-relaxed text-[hsl(var(--muted))]">
+              Günün kelimesini 6 denemede bul. Her deneme {wordLength} harfli geçerli bir kelime
+              olmalıdır. Her tahminden sonra kutucukların rengi, harflerin doğruluğuna göre değişir.
+            </p>
+            <div className="my-5 h-px bg-[hsl(var(--stroke))]" />
+            <h3 className="text-2xl font-extrabold">ÖRNEKLER</h3>
+            <div className="mt-4 space-y-3 text-left">
+              <div>
+                <div className="flex items-center justify-center gap-1.5 text-lg font-bold">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500 bg-green-600 text-white">
+                    R
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500">
+                    A
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500">
+                    D
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500">
+                    Y
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500">
+                    O
+                  </span>
+                </div>
+                <p className="mt-2 text-center text-sm text-[hsl(var(--muted))]">
+                  R harfi kelimede var ve doğru yerde.
+                </p>
+              </div>
+              <div>
+                <div className="flex items-center justify-center gap-1.5 text-lg font-bold">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500">
+                    S
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500 bg-yellow-600 text-white">
+                    E
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500">
+                    H
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500">
+                    P
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500">
+                    A
+                  </span>
+                </div>
+                <p className="mt-2 text-center text-sm text-[hsl(var(--muted))]">
+                  E harfi kelimede var fakat yanlış yerde.
+                </p>
+              </div>
+              <div>
+                <div className="flex items-center justify-center gap-1.5 text-lg font-bold">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500">
+                    K
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500">
+                    İ
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500">
+                    T
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500">
+                    A
+                  </span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-zinc-500 bg-zinc-700 text-zinc-200">
+                    P
+                  </span>
+                </div>
+                <p className="mt-2 text-center text-sm text-[hsl(var(--muted))]">
+                  P harfi kelimede yok.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setHelpOpen(false)}
+              className="mt-5 rounded-lg px-4 py-2 text-xl font-bold text-emerald-500"
+            >
+              ANLADIM
+            </button>
+          </div>
+        </div>
       )}
 
       {statsOpen && (
