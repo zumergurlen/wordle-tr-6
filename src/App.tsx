@@ -725,7 +725,7 @@ export default function App() {
                 checked={hostCustomWordEnabled}
                 onChange={(event) => setHostCustomWordEnabled(event.target.checked)}
               />
-              Kelimeyi sen belirle (oda sahibi/admin)
+              Kelimeyi sen belirle (Oda sahibi / Admin)
             </label>
             {hostCustomWordEnabled && (
               <input
@@ -740,14 +740,16 @@ export default function App() {
               <button
                 type="button"
                 onClick={handleCreateRoom}
-                className="rounded-lg bg-violet-600 px-3 py-2 text-sm font-semibold text-white"
+                disabled={!playerName.trim()}
+                className="rounded-lg bg-violet-600 px-3 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Oda Oluştur
               </button>
               <button
                 type="button"
                 onClick={handleJoinRoom}
-                className="rounded-lg bg-sky-700 px-3 py-2 text-sm font-semibold text-white"
+                disabled={!playerName.trim()}
+                className="rounded-lg bg-sky-700 px-3 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Odaya Katıl
               </button>
