@@ -897,7 +897,7 @@ export default function App() {
             {row.map((key) => {
               const state = keyStates.get(key) ?? "unknown";
               const isActionKey = key === "ENTER" || key === "SİL";
-              const keyLabel = key === "ENTER" ? "EN\nTER" : key;
+              const keyLabel = key === "ENTER" ? "⏎" : key;
               const scaleDelta = Math.max(0, keyboardScale - 1);
               const color =
                 state === "correct"
