@@ -185,7 +185,7 @@ export default function App() {
     return decoded;
   }, []);
 
-  const [wordLength, setWordLength] = useState<number>(challengeWord?.length ?? 6);
+  const [wordLength, setWordLength] = useState<number>(challengeWord?.length ?? 5);
   const [hasStarted, setHasStarted] = useState<boolean>(Boolean(challengeWord));
   const dictionaryForLength = useMemo(
     () => WORDS_BY_LENGTH[wordLength] ?? WORDS_BY_LENGTH[6] ?? [],
