@@ -62,7 +62,7 @@ const KB_SCALE_KEY = "wordle-tr6-keyboard-scale";
 const KB_MIN = 1.0;
 const KB_MAX = 1.9;
 const KB_STEP = 0.08;
-const KB_DEFAULT = 1.15;
+const KB_DEFAULT = 1.2;
 
 const INITIAL_STATS: GameStats = {
   played: 0,
@@ -781,7 +781,7 @@ export default function App() {
           <span className="text-center text-sm text-emerald-500">{message}</span>
           <span className="w-[62px]" />
         </div>
-        <div className="grid grid-rows-6 gap-2">
+        <div className="grid grid-rows-6 gap-1.5 sm:gap-2">
           {board.map((row, rowIdx) => {
             const states =
               row.length === wordLength && rowIdx < guesses.length
@@ -790,7 +790,7 @@ export default function App() {
             return (
               <div
                 key={rowIdx}
-                className="grid gap-1.5"
+                className="mx-auto grid w-full max-w-[320px] gap-1 sm:max-w-[360px] sm:gap-1.5"
                 style={{ gridTemplateColumns: `repeat(${wordLength}, minmax(0, 1fr))` }}
               >
                 {Array.from({ length: wordLength }).map((_, colIdx) => {
@@ -807,7 +807,7 @@ export default function App() {
                   return (
                     <div
                       key={`${rowIdx}-${colIdx}`}
-                      className={`flex aspect-square items-center justify-center rounded border text-lg font-bold uppercase sm:text-xl ${color}`}
+                      className={`flex aspect-square items-center justify-center rounded border text-base font-bold uppercase sm:text-xl ${color}`}
                     >
                       {letter}
                     </div>
@@ -890,10 +890,10 @@ export default function App() {
                   type="button"
                   onClick={() => handleVirtualKey(key)}
                   style={{
-                    minHeight: `${48 * keyboardScale}px`,
+                    minHeight: `${42 * keyboardScale}px`,
                     flex: `${isActionKey ? 1.45 : 1} 1 0`,
                     fontSize: `${13 * keyboardScale}px`,
-                    paddingInline: `${7 * keyboardScale}px`,
+                    paddingInline: `${8 * keyboardScale}px`,
                     paddingBlock: `${10 * keyboardScale}px`,
                   }}
                   className={`min-w-0 rounded font-semibold transition duration-100 active:scale-95 active:brightness-75 ${color}`}
