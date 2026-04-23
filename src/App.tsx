@@ -413,7 +413,7 @@ export default function App() {
     }
     toastTimeoutRef.current = window.setTimeout(() => {
       setToastText(null);
-    }, 1000);
+    }, 2000);
   }
 
   function shareResult() {
@@ -604,7 +604,7 @@ export default function App() {
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-4 bg-[hsl(var(--bg))] px-3 pb-[max(env(safe-area-inset-bottom),12px)] pt-4 text-[hsl(var(--text))] sm:px-4">
       {toastText && (
         <div className="pointer-events-none fixed left-1/2 top-1/2 z-40 -translate-x-1/2 -translate-y-1/2">
-          <div className="rounded-full border border-emerald-400/40 bg-zinc-900/95 px-4 py-2 text-sm font-semibold text-emerald-300 shadow-lg">
+          <div className="rounded-2xl border border-emerald-400/40 bg-zinc-900/95 px-6 py-3 text-base font-semibold text-emerald-300 shadow-2xl sm:text-lg">
             {toastText}
           </div>
         </div>
