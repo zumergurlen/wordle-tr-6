@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Instrument+Serif:ital@1&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg:      0 0% 4%;
+  --surface: 0 0% 8%;
+  --surface2: 0 0% 11%;
+  --text:    0 0% 96%;
+  --muted:   0 0% 53%;
+  --stroke:  0 0% 13%;
+  --accent:  36 30% 87%;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+}
+
+html, body, #root {
+  min-height: 100%;
+  min-height: -webkit-fill-available;
+}
+
+body {
+  background: hsl(var(--bg));
+  color: hsl(var(--text));
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--stroke));
+  border-radius: 2px;
+}
