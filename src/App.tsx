@@ -469,7 +469,7 @@ export default function App() {
         </div>
       )}
 
-      <header className="-mx-3 border-b border-zinc-800 bg-black/95 px-3 py-2 shadow-md sm:-mx-4 sm:px-4">
+      <header className="-mx-3 bg-black px-3 py-3 sm:-mx-4 sm:px-4">
         <div className="mx-auto flex w-full max-w-md items-center justify-between gap-2">
           {hasStarted ? (
             <button

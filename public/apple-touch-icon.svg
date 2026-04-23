@@ -24,9 +24,9 @@
       y="109"
       text-anchor="middle"
       font-family="Impact, Arial Black, Inter, system-ui, sans-serif"
-      font-size="58"
+      font-size="72"
       font-weight="900"
-      letter-spacing="-2"
+      letter-spacing="-3"
       fill="#22d3ee"
       opacity="0.35"
       filter="url(#glow)"
@@ -38,16 +38,14 @@
       y="109"
       text-anchor="middle"
       font-family="Impact, Arial Black, Inter, system-ui, sans-serif"
-      font-size="58"
+      font-size="72"
       font-weight="900"
-      letter-spacing="-2"
+      letter-spacing="-3"
       fill="#e2e8f0"
       stroke="#111827"
-      stroke-width="1.2"
+      stroke-width="1.4"
     >
       ZG
     </text>
   </g>
-  <circle cx="44" cy="44" r="7" fill="#06b6d4" opacity="0.9" />
-  <circle cx="140" cy="140" r="6" fill="#3b82f6" opacity="0.9" />
 </svg>
