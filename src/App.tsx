@@ -23,6 +23,15 @@ const TURKISH_KEYS = [
 
 type LetterState = "correct" | "present" | "absent" | "unknown";
 type Theme = "dark" | "light";
+type ConfettiPiece = {
+  id: number;
+  left: number;
+  color: string;
+  size: number;
+  delay: number;
+  duration: number;
+  rotate: number;
+};
 
 type GameStats = {
   played: number;
@@ -133,6 +142,9 @@ export default function App() {
 
   const [statsOpen, setStatsOpen] = useState(false);
   const [challengeOpen, setChallengeOpen] = useState(false);
+  const [loseModalOpen, setLoseModalOpen] = useState(false);
+  const [confettiPieces, setConfettiPieces] = useState<ConfettiPiece[]>([]);
+  const [loseImageHidden, setLoseImageHidden] = useState(false);
   const challengeWord = useMemo(() => {
     const params = new URLSearchParams(window.location.search);
     const encoded = params.get("challenge");
@@ -175,6 +187,9 @@ export default function App() {
     setGuesses([]);
     setCurrentGuess("");
     setElapsedSeconds(0);
+    setLoseModalOpen(false);
+    setLoseImageHidden(false);
+    setConfettiPieces([]);
     resultSavedRef.current = false;
   }, [wordLength, targetWord]);
 
@@ -255,7 +270,27 @@ export default function App() {
       }
       return next;
     });
-  }, [finished, won, guesses.length]);
+
+    if (won) {
+      const palette = ["#22c55e", "#06b6d4", "#facc15", "#a855f7", "#f43f5e", "#3b82f6"];
+      const pieces = Array.from({ length: 72 }).map((_, idx) => ({
+        id: idx,
+        left: Math.random() * 100,
+        color: palette[idx % palette.length],
+        size: 6 + Math.random() * 8,
+        delay: Math.random() * 0.4,
+        duration: 1.8 + Math.random() * 1.4,
+        rotate: Math.random() * 360,
+      }));
+      setConfettiPieces(pieces);
+      window.setTimeout(() => setConfettiPieces([]), 3200);
+      return;
+    }
+
+    if (lost) {
+      setLoseModalOpen(true);
+    }
+  }, [finished, won, lost, guesses.length]);
 
   useEffect(() => {
     if (!hasStarted || finished) return;
@@ -358,6 +393,8 @@ export default function App() {
     setGuesses([]);
     setCurrentGuess("");
     setElapsedSeconds(0);
+    setLoseModalOpen(false);
+    setConfettiPieces([]);
     resultSavedRef.current = false;
     setMessage(`Yeni oyun basladi. ${wordLength} harfli kelimeyi bul.`);
   }
@@ -394,6 +431,8 @@ export default function App() {
     setGuesses([]);
     setCurrentGuess("");
     setElapsedSeconds(0);
+    setLoseModalOpen(false);
+    setConfettiPieces([]);
     resultSavedRef.current = false;
     setMessage(`${wordLength} harfli kelimeyi bul.`);
   }
@@ -406,6 +445,26 @@ export default function App() {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-4 bg-[hsl(var(--bg))] px-3 pb-[max(env(safe-area-inset-bottom),12px)] pt-4 text-[hsl(var(--text))] sm:px-4">
+      {confettiPieces.length > 0 && (
+        <div className="pointer-events-none fixed inset-0 z-30 overflow-hidden">
+          {confettiPieces.map((piece) => (
+            <span
+              key={piece.id}
+              className="confetti-piece"
+              style={{
+                left: `${piece.left}%`,
+                width: `${piece.size}px`,
+                height: `${piece.size * 1.6}px`,
+                backgroundColor: piece.color,
+                animationDelay: `${piece.delay}s`,
+                animationDuration: `${piece.duration}s`,
+                transform: `rotate(${piece.rotate}deg)`,
+              }}
+            />
+          ))}
+        </div>
+      )}
+
       <header className="space-y-2 text-center">
         <div className="flex items-center justify-between gap-2">
           {hasStarted ? (
@@ -675,6 +734,30 @@ export default function App() {
                 Link Üret
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {loseModalOpen && (
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-sm rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-4 text-center">
+            <h2 className="mb-2 text-2xl font-extrabold text-rose-400">BİLEMEDİN!</h2>
+            <p className="mb-3 text-sm text-[hsl(var(--muted))]">Kelime: {targetWord}</p>
+            {!loseImageHidden && (
+              <img
+                src="/bilemedin.png"
+                alt="Bilemedin"
+                onError={() => setLoseImageHidden(true)}
+                className="mx-auto mb-3 max-h-56 w-auto rounded-lg border border-[hsl(var(--stroke))]"
+              />
+            )}
+            <button
+              type="button"
+              onClick={() => setLoseModalOpen(false)}
+              className="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white"
+            >
+              Tamam
+            </button>
           </div>
         </div>
       )}
