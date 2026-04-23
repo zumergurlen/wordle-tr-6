@@ -506,18 +506,18 @@ export default function App() {
       </header>
 
       {!hasStarted && !challengeWord && (
-        <section className="rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-4 shadow-sm">
-          <h2 className="mb-2 text-center text-base font-bold">Oyun Ayarı</h2>
-          <p className="mb-3 text-center text-xs text-[hsl(var(--muted))]">
+        <section className="rounded-2xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-5 shadow-sm sm:p-6">
+          <h2 className="mb-2 text-center text-xl font-bold sm:text-2xl">Oyun Ayarı</h2>
+          <p className="mb-4 text-center text-sm text-[hsl(var(--muted))] sm:text-base">
             Harf sayısını seç, sonra oyuna başla.
           </p>
-          <div className="mb-3 flex justify-center gap-1">
+          <div className="mb-4 flex justify-center gap-2">
             {WORD_LENGTH_OPTIONS.map((len) => (
               <button
                 key={len}
                 type="button"
                 onClick={() => changeWordLength(len)}
-                className={`rounded px-3 py-2 text-xs font-semibold ${
+                className={`rounded-lg px-4 py-2 text-sm font-semibold sm:text-base ${
                   wordLength === len
                     ? "bg-cyan-700 text-white"
                     : "bg-[hsl(var(--surface2))] text-[hsl(var(--text))]"
@@ -530,14 +530,14 @@ export default function App() {
           <button
             type="button"
             onClick={startGame}
-            className="w-full rounded bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+            className="w-full rounded-lg bg-emerald-600 px-4 py-3 text-base font-semibold text-white sm:py-4 sm:text-lg"
           >
-            Oyuna Başla
+            Günün Kelimesi
           </button>
           <button
             type="button"
             onClick={() => setChallengeOpen(true)}
-            className="mt-2 w-full rounded bg-cyan-700 px-4 py-3 text-sm font-semibold text-white"
+            className="mt-3 w-full rounded-lg bg-cyan-700 px-4 py-3 text-base font-semibold text-white sm:py-4 sm:text-lg"
           >
             Arkadaşına Meydan Oku
           </button>
