@@ -629,13 +629,13 @@ export default function App() {
         </div>
       )}
 
-      <header className="-mx-3 bg-black px-3 py-3 sm:-mx-4 sm:px-4">
+      <header className="-mx-3 border-b border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] px-3 py-3 sm:-mx-4 sm:px-4">
         <div className="mx-auto flex w-full max-w-md items-center justify-between gap-2">
           {hasStarted ? (
             <button
               type="button"
               onClick={goBackHome}
-              className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-semibold text-zinc-100"
+              className="rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-2 text-xs font-semibold text-[hsl(var(--text))]"
             >
               ← Geri
             </button>
@@ -643,12 +643,12 @@ export default function App() {
             <button
               type="button"
               onClick={() => setStatsOpen(true)}
-              className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-semibold text-zinc-100"
+              className="rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-2 text-xs font-semibold text-[hsl(var(--text))]"
             >
               İstatistik
             </button>
           )}
-          <h1 className="flex items-center gap-2 text-xl font-bold sm:text-2xl">
+          <h1 className="flex items-center gap-2 text-xl font-bold text-[hsl(var(--text))] sm:text-2xl">
             <img src="/logo.svg" alt="Kelime Oyunu logosu" className="h-7 w-7 rounded-md" />
             KELİME OYUNU
             <img src="/logo.svg" alt="Kelime Oyunu logosu" className="h-7 w-7 rounded-md" />
@@ -656,7 +656,7 @@ export default function App() {
           <button
             type="button"
             onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
-            className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-semibold text-zinc-100"
+            className="rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-2 text-xs font-semibold text-[hsl(var(--text))]"
           >
             {theme === "dark" ? "Light" : "Dark"}
           </button>
