@@ -364,9 +364,9 @@ export default function App() {
             onClick={() => setStatsOpen(true)}
             className="rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] px-3 py-2 text-xs font-semibold"
           >
-            Istatistik
+            İstatistik
           </button>
-          <h1 className="text-xl font-bold sm:text-2xl">WORDLE TR - 6 HARF</h1>
+          <h1 className="text-xl font-bold sm:text-2xl">WORDLE TR</h1>
           <button
             type="button"
             onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
@@ -382,9 +382,9 @@ export default function App() {
 
       {!hasStarted && !challengeWord && (
         <section className="rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-4 shadow-sm">
-          <h2 className="mb-2 text-center text-base font-bold">Oyun Ayari</h2>
+          <h2 className="mb-2 text-center text-base font-bold">Oyun Ayarı</h2>
           <p className="mb-3 text-center text-xs text-[hsl(var(--muted))]">
-            Harf sayisini sec, sonra oyuna basla.
+            Harf sayısını seç, sonra oyuna başla.
           </p>
           <div className="mb-3 flex justify-center gap-1">
             {WORD_LENGTH_OPTIONS.map((len) => (
@@ -407,7 +407,7 @@ export default function App() {
             onClick={startGame}
             className="w-full rounded bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
           >
-            Oyuna Basla
+            Oyuna Başla
           </button>
         </section>
       )}
@@ -515,7 +515,7 @@ export default function App() {
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/60 p-4">
           <div className="w-full max-w-sm rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-4">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-bold">Istatistikler</h2>
+              <h2 className="text-lg font-bold">İstatistikler</h2>
               <button
                 type="button"
                 onClick={() => setStatsOpen(false)}
@@ -552,7 +552,7 @@ export default function App() {
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/60 p-4">
           <div className="w-full max-w-sm rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-4">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-bold">Arkadasina Meydan Oku</h2>
+              <h2 className="text-lg font-bold">Arkadaşına Meydan Oku</h2>
               <button
                 type="button"
                 onClick={() => setChallengeOpen(false)}
@@ -562,7 +562,7 @@ export default function App() {
               </button>
             </div>
             <p className="mb-3 text-xs text-[hsl(var(--muted))]">
-              {wordLength} harfli kelime gir. Link olusunca arkadasina gonder.
+              {wordLength} harfli kelime gir. Link oluşunca arkadaşına gönder.
             </p>
             <div className="flex gap-2">
               <input
@@ -577,7 +577,7 @@ export default function App() {
                 onClick={createChallengeLink}
                 className="rounded bg-cyan-700 px-4 py-2 text-sm font-semibold text-white"
               >
-                Link Uret
+                Link Üret
               </button>
             </div>
           </div>
