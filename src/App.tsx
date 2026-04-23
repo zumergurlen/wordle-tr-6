@@ -897,7 +897,7 @@ export default function App() {
             {row.map((key) => {
               const state = keyStates.get(key) ?? "unknown";
               const isActionKey = key === "ENTER" || key === "SİL";
-              const keyLabel = key === "ENTER" ? "⏎" : key;
+              const keyLabel = key === "ENTER" ? "↵" : key;
               const scaleDelta = Math.max(0, keyboardScale - 1);
               const color =
                 state === "correct"
@@ -921,7 +921,7 @@ export default function App() {
                   style={{
                     minHeight: `${42 + scaleDelta * 8}px`,
                     flex: `${isActionKey ? 1.45 : 1} 1 0`,
-                    fontSize: `${(key === "ENTER" ? 15 : key === "SİL" ? 11.5 : 13) + scaleDelta * 2}px`,
+                    fontSize: `${13 + scaleDelta * 2}px`,
                     paddingInline: `${8 + scaleDelta * 8}px`,
                     paddingBlock: `${10 + scaleDelta * 2}px`,
                   }}
