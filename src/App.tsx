@@ -651,6 +651,7 @@ export default function App() {
           <h1 className="flex items-center gap-2 text-xl font-bold sm:text-2xl">
             <img src="/logo.svg" alt="Kelime Oyunu logosu" className="h-7 w-7 rounded-md" />
             KELİME OYUNU
+            <img src="/logo.svg" alt="Kelime Oyunu logosu" className="h-7 w-7 rounded-md" />
           </h1>
           <button
             type="button"

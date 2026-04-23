@@ -19,34 +19,36 @@
   <g filter="url(#containerShadow)">
     <rect x="16" y="16" width="224" height="224" rx="32" fill="#0A0A0A" />
   </g>
-  <text
-    x="128"
-    y="143"
-    text-anchor="middle"
-    dominant-baseline="middle"
-    font-family="'Playfair Display', serif"
-    font-size="110"
-    font-weight="700"
-    font-style="italic"
-    letter-spacing="2"
-    fill="#1E90FF"
-    filter="url(#textGlow)"
-  >
-    ZG
-  </text>
-  <text
-    x="128"
-    y="147"
-    text-anchor="middle"
-    dominant-baseline="middle"
-    font-family="'Playfair Display', serif"
-    font-size="110"
-    font-weight="700"
-    font-style="italic"
-    letter-spacing="2"
-    fill="#F5F5F5"
-    filter="url(#textShadow)"
-  >
-    ZG
-  </text>
+  <g transform="skewX(-12)">
+    <text
+      x="158"
+      y="143"
+      text-anchor="middle"
+      dominant-baseline="middle"
+      font-family="'Playfair Display', serif"
+      font-size="110"
+      font-weight="700"
+      font-style="italic"
+      letter-spacing="2"
+      fill="#1E90FF"
+      filter="url(#textGlow)"
+    >
+      ZG
+    </text>
+    <text
+      x="158"
+      y="147"
+      text-anchor="middle"
+      dominant-baseline="middle"
+      font-family="'Playfair Display', serif"
+      font-size="110"
+      font-weight="700"
+      font-style="italic"
+      letter-spacing="2"
+      fill="#F5F5F5"
+      filter="url(#textShadow)"
+    >
+      ZG
+    </text>
+  </g>
 </svg>
