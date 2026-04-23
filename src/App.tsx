@@ -877,6 +877,7 @@ export default function App() {
               const state = keyStates.get(key) ?? "unknown";
               const isActionKey = key === "ENTER" || key === "SİL";
               const keyLabel = key === "ENTER" ? "EN\nTER" : key;
+              const scaleDelta = Math.max(0, keyboardScale - 1);
               const color =
                 state === "correct"
                   ? "bg-green-600 text-white"
@@ -891,11 +892,11 @@ export default function App() {
                   type="button"
                   onClick={() => handleVirtualKey(key)}
                   style={{
-                    minHeight: `${42 * keyboardScale}px`,
+                    minHeight: `${42 + scaleDelta * 8}px`,
                     flex: `${isActionKey ? 1.45 : 1} 1 0`,
-                    fontSize: `${(isActionKey ? 11.5 : 13) * keyboardScale}px`,
-                    paddingInline: `${8 * keyboardScale}px`,
-                    paddingBlock: `${10 * keyboardScale}px`,
+                    fontSize: `${(isActionKey ? 11.5 : 13) + scaleDelta * 2}px`,
+                    paddingInline: `${8 + scaleDelta * 8}px`,
+                    paddingBlock: `${10 + scaleDelta * 2}px`,
                   }}
                   className={`min-w-0 rounded text-center font-semibold leading-tight whitespace-pre-line transition duration-100 active:scale-95 active:brightness-75 ${color}`}
                 >
