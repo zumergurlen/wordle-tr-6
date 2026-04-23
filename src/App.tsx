@@ -65,6 +65,7 @@ const KB_MIN = 1.0;
 const KB_MAX = 1.9;
 const KB_STEP = 0.08;
 const KB_DEFAULT = 1.0;
+const REVEAL_DELAY_MS = 140;
 
 const INITIAL_STATS: GameStats = {
   played: 0,
@@ -220,14 +221,18 @@ export default function App() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [toastText, setToastText] = useState<string | null>(null);
   const [pressedKey, setPressedKey] = useState<string | null>(null);
+  const [revealingRowIndex, setRevealingRowIndex] = useState<number | null>(null);
+  const [revealedLettersCount, setRevealedLettersCount] = useState(0);
   const resultSavedRef = useRef(false);
   const toastTimeoutRef = useRef<number | null>(null);
   const pressedKeyTimeoutRef = useRef<number | null>(null);
+  const revealIntervalRef = useRef<number | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
 
   const won = guesses.some((guess) => guess === targetWord);
   const lost = guesses.length >= MAX_GUESSES && !won;
   const finished = won || lost;
+  const isRevealing = revealingRowIndex !== null;
 
   useEffect(() => {
     setMessage(`${wordLength} harfli kelimeyi bul.`);
@@ -237,6 +242,8 @@ export default function App() {
     setLoseModalOpen(false);
     setLoseImageHidden(false);
     setConfettiPieces([]);
+    setRevealingRowIndex(null);
+    setRevealedLettersCount(0);
     resultSavedRef.current = false;
   }, [wordLength, targetWord]);
 
@@ -270,7 +277,8 @@ export default function App() {
 
   const keyStates = useMemo(() => {
     const map = new Map<string, LetterState>();
-    guesses.forEach((guess) => {
+    const guessesForKeyboard = isRevealing ? guesses.slice(0, -1) : guesses;
+    guessesForKeyboard.forEach((guess) => {
       const states = evaluateGuess(guess, targetWord);
       guess.split("").forEach((char, idx) => {
         const next = states[idx];
@@ -281,7 +289,7 @@ export default function App() {
       });
     });
     return map;
-  }, [guesses, targetWord]);
+  }, [guesses, targetWord, isRevealing]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -363,6 +371,9 @@ export default function App() {
       if (pressedKeyTimeoutRef.current) {
         window.clearTimeout(pressedKeyTimeoutRef.current);
       }
+      if (revealIntervalRef.current) {
+        window.clearInterval(revealIntervalRef.current);
+      }
     };
   }, []);
 
@@ -383,17 +394,59 @@ export default function App() {
   }, [room, hasStarted, guesses.length, won, elapsedSeconds]);
 
   function addLetter(letter: string) {
+    if (isRevealing) return;
     if (finished) return;
     if (currentGuess.length >= wordLength) return;
     setCurrentGuess((prev) => prev + letter);
   }
 
   function removeLetter() {
+    if (isRevealing) return;
     if (finished) return;
     setCurrentGuess((prev) => prev.slice(0, -1));
   }
 
+  function runRevealAnimation(submittedGuess: string, nextGuesses: string[]) {
+    if (revealIntervalRef.current) {
+      window.clearInterval(revealIntervalRef.current);
+    }
+
+    const rowIndex = nextGuesses.length - 1;
+    setRevealingRowIndex(rowIndex);
+    setRevealedLettersCount(0);
+
+    let count = 0;
+    revealIntervalRef.current = window.setInterval(() => {
+      count += 1;
+      setRevealedLettersCount(count);
+
+      if (count < wordLength) return;
+
+      if (revealIntervalRef.current) {
+        window.clearInterval(revealIntervalRef.current);
+        revealIntervalRef.current = null;
+      }
+
+      setRevealingRowIndex(null);
+
+      if (submittedGuess === targetWord) {
+        setMessage("Tebrikler! Kelimeyi buldun.");
+        return;
+      }
+      if (nextGuesses.length >= MAX_GUESSES) {
+        setMessage(`Bilemedin. Kelime: ${targetWord}`);
+        return;
+      }
+      if (!playableWords.has(submittedGuess)) {
+        setMessage("Kelime kabul edildi (geniş mod). Devam et.");
+        return;
+      }
+      setMessage("Devam et, çok yakınsın.");
+    }, REVEAL_DELAY_MS);
+  }
+
   function submitGuess() {
+    if (isRevealing) return;
     if (finished) return;
     if (currentGuess.length !== wordLength) {
       setMessage(`Kelime ${wordLength} harfli olmalı.`);
@@ -405,23 +458,11 @@ export default function App() {
       return;
     }
 
-    const nextGuesses = [...guesses, currentGuess];
+    const submittedGuess = currentGuess;
+    const nextGuesses = [...guesses, submittedGuess];
     setGuesses(nextGuesses);
     setCurrentGuess("");
-
-    if (currentGuess === targetWord) {
-      setMessage("Tebrikler! Kelimeyi buldun.");
-      return;
-    }
-    if (nextGuesses.length >= MAX_GUESSES) {
-      setMessage(`Bilemedin. Kelime: ${targetWord}`);
-      return;
-    }
-    if (!playableWords.has(currentGuess)) {
-      setMessage("Kelime kabul edildi (geniş mod). Devam et.");
-      return;
-    }
-    setMessage("Devam et, çok yakınsın.");
+    runRevealAnimation(submittedGuess, nextGuesses);
   }
 
   function handleVirtualKey(key: string) {
@@ -540,11 +581,17 @@ export default function App() {
   }
 
   function restartGame() {
+    if (revealIntervalRef.current) {
+      window.clearInterval(revealIntervalRef.current);
+      revealIntervalRef.current = null;
+    }
     setGuesses([]);
     setCurrentGuess("");
     setElapsedSeconds(0);
     setLoseModalOpen(false);
     setConfettiPieces([]);
+    setRevealingRowIndex(null);
+    setRevealedLettersCount(0);
     resultSavedRef.current = false;
     setMessage(`Yeni oyun başladı. ${wordLength} harfli kelimeyi bul.`);
   }
@@ -872,7 +919,13 @@ export default function App() {
           {board.map((row, rowIdx) => {
             const states =
               row.length === wordLength && rowIdx < guesses.length
-                ? evaluateGuess(row, targetWord)
+                ? (() => {
+                    const evaluated = evaluateGuess(row, targetWord);
+                    if (rowIdx !== revealingRowIndex) return evaluated;
+                    return evaluated.map((state, idx) =>
+                      idx < revealedLettersCount ? state : "unknown",
+                    );
+                  })()
                 : [];
             return (
               <div
@@ -894,7 +947,11 @@ export default function App() {
                   return (
                     <div
                       key={`${rowIdx}-${colIdx}`}
-                      className={`flex aspect-square items-center justify-center rounded border text-base font-bold uppercase sm:text-xl ${color}`}
+                      className={`flex aspect-square items-center justify-center rounded border text-base font-bold uppercase sm:text-xl ${
+                        rowIdx === revealingRowIndex && colIdx === revealedLettersCount - 1
+                          ? "reveal-pop"
+                          : ""
+                      } ${color}`}
                     >
                       {letter}
                     </div>

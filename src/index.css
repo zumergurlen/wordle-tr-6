@@ -84,3 +84,22 @@ button {
     opacity: 0.9;
   }
 }
+
+.reveal-pop {
+  animation: reveal-pop 180ms ease-out;
+}
+
+@keyframes reveal-pop {
+  0% {
+    transform: scale(0.82);
+    filter: brightness(0.85);
+  }
+  70% {
+    transform: scale(1.06);
+    filter: brightness(1.08);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
