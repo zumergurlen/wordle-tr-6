@@ -876,6 +876,7 @@ export default function App() {
             {row.map((key) => {
               const state = keyStates.get(key) ?? "unknown";
               const isActionKey = key === "ENTER" || key === "SİL";
+              const keyLabel = key === "ENTER" ? "EN\nTER" : key;
               const color =
                 state === "correct"
                   ? "bg-green-600 text-white"
@@ -892,13 +893,13 @@ export default function App() {
                   style={{
                     minHeight: `${42 * keyboardScale}px`,
                     flex: `${isActionKey ? 1.45 : 1} 1 0`,
-                    fontSize: `${13 * keyboardScale}px`,
+                    fontSize: `${(isActionKey ? 11.5 : 13) * keyboardScale}px`,
                     paddingInline: `${8 * keyboardScale}px`,
                     paddingBlock: `${10 * keyboardScale}px`,
                   }}
-                  className={`min-w-0 rounded font-semibold transition duration-100 active:scale-95 active:brightness-75 ${color}`}
+                  className={`min-w-0 rounded text-center font-semibold leading-tight whitespace-pre-line transition duration-100 active:scale-95 active:brightness-75 ${color}`}
                 >
-                  {key}
+                  {keyLabel}
                 </button>
               );
             })}
