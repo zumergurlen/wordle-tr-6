@@ -1,51 +1,67 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0f172a" />
-      <stop offset="100%" stop-color="#111827" />
+    <linearGradient id="borderGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1E90FF" />
+      <stop offset="100%" stop-color="#00BFFF" />
     </linearGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#06b6d4" />
-      <stop offset="100%" stop-color="#3b82f6" />
-    </linearGradient>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="1.8" result="blur" />
-      <feMerge>
-        <feMergeNode in="blur" />
-        <feMergeNode in="SourceGraphic" />
-      </feMerge>
+    <filter id="containerShadow" x="-40%" y="-40%" width="180%" height="200%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="rgba(0,0,0,0.6)" />
+    </filter>
+    <filter id="textGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4.2" result="blur" />
+      <feColorMatrix
+        in="blur"
+        type="matrix"
+        values="0 0 0 0 0.1176 0 0 0 0 0.5647 0 0 0 0 1 0 0 0 0.6 0"
+      />
+    </filter>
+    <filter id="textShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="2" dy="4" stdDeviation="2.4" flood-color="rgba(0,0,0,0.8)" />
     </filter>
   </defs>
-  <rect width="180" height="180" rx="40" fill="url(#bg)" />
-  <rect x="12" y="12" width="156" height="156" rx="32" fill="none" stroke="url(#accent)" stroke-width="5" opacity="0.7" />
-  <g transform="translate(7,0) skewX(-10)">
-    <text
-      x="90"
-      y="109"
-      text-anchor="middle"
-      font-family="Impact, Arial Black, Inter, system-ui, sans-serif"
-      font-size="72"
-      font-weight="900"
-      letter-spacing="-3"
-      fill="#22d3ee"
-      opacity="0.35"
-      filter="url(#glow)"
-    >
-      ZG
-    </text>
-    <text
-      x="90"
-      y="109"
-      text-anchor="middle"
-      font-family="Impact, Arial Black, Inter, system-ui, sans-serif"
-      font-size="72"
-      font-weight="900"
-      letter-spacing="-3"
-      fill="#e2e8f0"
-      stroke="#111827"
-      stroke-width="1.4"
-    >
-      ZG
-    </text>
+  <rect width="180" height="180" fill="#0A0A0A" />
+  <g filter="url(#containerShadow)">
+    <rect x="12" y="12" width="156" height="156" rx="24" fill="#0A0A0A" />
+    <rect
+      x="12"
+      y="12"
+      width="156"
+      height="156"
+      rx="24"
+      fill="none"
+      stroke="url(#borderGrad)"
+      stroke-width="4"
+      opacity="0.8"
+    />
   </g>
+  <text
+    x="90"
+    y="98"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    font-family="'Playfair Display', serif"
+    font-size="52"
+    font-weight="700"
+    font-style="italic"
+    letter-spacing="2"
+    fill="#1E90FF"
+    filter="url(#textGlow)"
+  >
+    ZG
+  </text>
+  <text
+    x="90"
+    y="98"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    font-family="'Playfair Display', serif"
+    font-size="52"
+    font-weight="700"
+    font-style="italic"
+    letter-spacing="2"
+    fill="#F5F5F5"
+    filter="url(#textShadow)"
+  >
+    ZG
+  </text>
 </svg>
