@@ -121,6 +121,7 @@ export default function App() {
   });
 
   const [statsOpen, setStatsOpen] = useState(false);
+  const [challengeOpen, setChallengeOpen] = useState(false);
   const challengeWord = useMemo(() => {
     const params = new URLSearchParams(window.location.search);
     const encoded = params.get("challenge");
@@ -305,6 +306,7 @@ export default function App() {
     const url = `${window.location.origin}${window.location.pathname}?challenge=${encoded}`;
     navigator.clipboard.writeText(url).then(() => {
       setMessage("Meydan okuma linki panoya kopyalandı.");
+      setChallengeOpen(false);
     });
   }
 
@@ -385,12 +387,12 @@ export default function App() {
               const state = keyStates.get(key) ?? "unknown";
               const color =
                 state === "correct"
-                  ? "bg-green-600"
+                  ? "bg-green-600 text-white"
                   : state === "present"
-                    ? "bg-yellow-600"
+                    ? "bg-yellow-600 text-white"
                     : state === "absent"
-                      ? "bg-zinc-600"
-                      : "bg-[hsl(var(--surface2))]";
+                      ? "bg-zinc-800 text-zinc-400"
+                      : "bg-zinc-500 text-white";
               return (
                 <button
                   key={key}
@@ -407,7 +409,7 @@ export default function App() {
       </section>
 
       <section className="grid gap-2 rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-3">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           <button
             type="button"
             onClick={shareResult}
@@ -423,21 +425,12 @@ export default function App() {
           >
             Yeni Oyun
           </button>
-        </div>
-        <div className="flex gap-2">
-          <input
-            value={customWord}
-            onChange={(event) => setCustomWord(event.target.value)}
-            maxLength={WORD_LENGTH}
-            placeholder="6 harfli kelime"
-            className="w-full rounded border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-2 text-sm outline-none"
-          />
           <button
             type="button"
-            onClick={createChallengeLink}
-            className="rounded bg-cyan-700 px-4 py-2 text-sm font-semibold text-white"
+            onClick={() => setChallengeOpen(true)}
+            className="rounded bg-cyan-700 px-4 py-3 text-sm font-semibold text-white"
           >
-            Link Üret
+            Meydan Oku
           </button>
         </div>
       </section>
@@ -474,6 +467,42 @@ export default function App() {
                   <span className="w-6 text-right">{count}</span>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {challengeOpen && (
+        <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-sm rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-lg font-bold">Arkadasina Meydan Oku</h2>
+              <button
+                type="button"
+                onClick={() => setChallengeOpen(false)}
+                className="rounded bg-[hsl(var(--surface2))] px-3 py-1 text-sm"
+              >
+                Kapat
+              </button>
+            </div>
+            <p className="mb-3 text-xs text-[hsl(var(--muted))]">
+              6 harfli kelime gir. Link olusunca arkadasina gonder.
+            </p>
+            <div className="flex gap-2">
+              <input
+                value={customWord}
+                onChange={(event) => setCustomWord(event.target.value)}
+                maxLength={WORD_LENGTH}
+                placeholder="6 harfli kelime"
+                className="w-full rounded border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-2 text-sm outline-none"
+              />
+              <button
+                type="button"
+                onClick={createChallengeLink}
+                className="rounded bg-cyan-700 px-4 py-2 text-sm font-semibold text-white"
+              >
+                Link Uret
+              </button>
             </div>
           </div>
         </div>
