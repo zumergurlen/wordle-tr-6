@@ -894,7 +894,7 @@ export default function App() {
                     paddingInline: `${9 * keyboardScale}px`,
                     paddingBlock: `${10 * keyboardScale}px`,
                   }}
-                  className={`rounded font-semibold active:scale-95 ${color}`}
+                  className={`rounded font-semibold transition duration-100 active:scale-95 active:brightness-75 ${color}`}
                 >
                   {key}
                 </button>
