@@ -5,6 +5,7 @@ export const RAW_WORDS = [
   "balkon",
   "kartal",
   "kasaba",
+  "keskin",
   "mevsim",
   "kumsal",
   "orkide",

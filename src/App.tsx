@@ -238,8 +238,8 @@ export default function App() {
       setMessage(`Kelime ${WORD_LENGTH} harfli olmalı.`);
       return;
     }
-    if (!playableWords.has(currentGuess)) {
-      setMessage("Bu kelime sözlükte yok.");
+    if (!/^[A-ZÇĞİIÖŞÜ]{6}$/u.test(currentGuess)) {
+      setMessage("Sadece harf kullanabilirsin.");
       return;
     }
 
@@ -253,6 +253,10 @@ export default function App() {
     }
     if (nextGuesses.length >= MAX_GUESSES) {
       setMessage(`Bilemedin. Kelime: ${targetWord}`);
+      return;
+    }
+    if (!playableWords.has(currentGuess)) {
+      setMessage("Kelime kabul edildi (geniş mod). Devam et.");
       return;
     }
     setMessage("Devam et, çok yakınsın.");
