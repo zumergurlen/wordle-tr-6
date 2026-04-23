@@ -372,19 +372,42 @@ export default function App() {
     setMessage(`${wordLength} harfli kelimeyi bul.`);
   }
 
+  function goBackHome() {
+    if (challengeWord) {
+      window.location.href = `${window.location.origin}${window.location.pathname}`;
+      return;
+    }
+    setHasStarted(false);
+    setChallengeOpen(false);
+    setGuesses([]);
+    setCurrentGuess("");
+    resultSavedRef.current = false;
+    setMessage(`${wordLength} harfli kelimeyi bul.`);
+  }
+
   const winRate = stats.played ? Math.round((stats.wins / stats.played) * 100) : 0;
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-4 bg-[hsl(var(--bg))] px-3 pb-[max(env(safe-area-inset-bottom),12px)] pt-4 text-[hsl(var(--text))] sm:px-4">
       <header className="space-y-2 text-center">
         <div className="flex items-center justify-between gap-2">
-          <button
-            type="button"
-            onClick={() => setStatsOpen(true)}
-            className="rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] px-3 py-2 text-xs font-semibold"
-          >
-            İstatistik
-          </button>
+          {hasStarted ? (
+            <button
+              type="button"
+              onClick={goBackHome}
+              className="rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] px-3 py-2 text-xs font-semibold"
+            >
+              ← Geri
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setStatsOpen(true)}
+              className="rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] px-3 py-2 text-xs font-semibold"
+            >
+              İstatistik
+            </button>
+          )}
           <h1 className="text-xl font-bold sm:text-2xl">KELİME OYUNU</h1>
           <button
             type="button"
