@@ -928,7 +928,13 @@ export default function App() {
                   className={`relative min-w-0 rounded-xl border border-zinc-700/70 text-center font-semibold leading-tight whitespace-pre-line shadow-[0_2px_0_rgba(0,0,0,0.35)] transition duration-100 active:scale-95 active:brightness-90 ${color}`}
                 >
                   {pressedKey === key && (
-                    <span className="pointer-events-none absolute -top-12 left-1/2 z-20 flex h-11 min-w-[42px] -translate-x-1/2 items-center justify-center rounded-xl border border-zinc-500 bg-zinc-200 px-2 text-lg font-bold text-zinc-900 shadow-xl">
+                    <span
+                      className={`pointer-events-none absolute -top-12 left-1/2 z-20 flex h-11 min-w-[42px] -translate-x-1/2 items-center justify-center rounded-xl border px-2 text-lg font-bold shadow-xl ${
+                        theme === "dark"
+                          ? "border-zinc-500 bg-zinc-200 text-zinc-900"
+                          : "border-zinc-400 bg-zinc-900 text-zinc-100"
+                      }`}
+                    >
                       {key === "ENTER" ? "⏎" : key}
                     </span>
                   )}
