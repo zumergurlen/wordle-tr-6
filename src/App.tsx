@@ -26,8 +26,7 @@ const WORDS_BY_LENGTH = RAW_WORDS.reduce<Record<number, string[]>>((acc, raw) =>
 const TURKISH_KEYS = [
   ["E", "R", "T", "Y", "U", "I", "O", "P", "Ğ", "Ü"],
   ["A", "S", "D", "F", "G", "H", "J", "K", "L", "Ş", "İ"],
-  ["Z", "C", "V", "B", "N", "M", "Ö", "Ç", "SİL"],
-  ["ENTER"],
+  ["ENTER", "Z", "C", "V", "B", "N", "M", "Ö", "Ç", "SİL"],
 ];
 
 type LetterState = "correct" | "present" | "absent" | "unknown";
@@ -894,14 +893,10 @@ export default function App() {
           </div>
         </div>
         {TURKISH_KEYS.map((row, idx) => (
-          <div
-            key={idx}
-            className={`flex w-full gap-1.5 ${row.length === 1 ? "justify-end" : ""}`}
-          >
+          <div key={idx} className="flex w-full gap-1.5">
             {row.map((key) => {
               const state = keyStates.get(key) ?? "unknown";
               const isActionKey = key === "ENTER" || key === "SİL";
-              const isBottomEnter = row.length === 1 && key === "ENTER";
               const keyLabel = key === "ENTER" ? "EN\nTER" : key;
               const scaleDelta = Math.max(0, keyboardScale - 1);
               const color =
@@ -925,8 +920,7 @@ export default function App() {
                   onTouchCancel={clearPressedKey}
                   style={{
                     minHeight: `${42 + scaleDelta * 8}px`,
-                    flex: isBottomEnter ? "0 0 auto" : `${isActionKey ? 1.45 : 1} 1 0`,
-                    minWidth: isBottomEnter ? `${76 + scaleDelta * 28}px` : undefined,
+                    flex: `${isActionKey ? 1.45 : 1} 1 0`,
                     fontSize: `${(isActionKey ? 11.5 : 13) + scaleDelta * 2}px`,
                     paddingInline: `${8 + scaleDelta * 8}px`,
                     paddingBlock: `${10 + scaleDelta * 2}px`,
