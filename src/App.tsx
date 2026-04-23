@@ -748,7 +748,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={handleJoinRoom}
-                disabled={!playerName.trim()}
+                disabled={!playerName.trim() || roomCodeInput.trim().length < 4}
                 className="rounded-lg bg-sky-700 px-3 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Odaya Katıl
