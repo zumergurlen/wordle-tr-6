@@ -459,7 +459,7 @@ export default function App() {
       : `Deneme: ${guesses.length}/${MAX_GUESSES} | Süre: ${timerText}`;
     const text = `${header}\n${detailLine}\n\nTahminler:\n${guessesText}\n\n${rows}\n${window.location.href}`;
     navigator.clipboard.writeText(text).then(() => {
-      showToast("Sonuç panoya kopyalandı");
+      showToast("SONUÇ PANOYA KOPYALANDI.");
     });
   }
 
