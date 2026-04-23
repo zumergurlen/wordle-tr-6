@@ -49,6 +49,10 @@ body {
   transition: background 0.2s ease, color 0.2s ease;
 }
 
+button {
+  touch-action: manipulation;
+}
+
 ::-webkit-scrollbar {
   width: 4px;
 }
