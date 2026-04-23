@@ -666,7 +666,7 @@ export default function App() {
             ? `Canlı Oda: ${room.code}`
             : challengeWord
               ? "Arkadaş meydan okuması"
-              : "Günün kelimesi modu"}
+              : "Günün Kelimesi Modu"}
         </p>
       </header>
 
@@ -675,7 +675,7 @@ export default function App() {
           <section className="rounded-2xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-5 shadow-sm sm:p-6">
             <h2 className="mb-2 text-center text-xl font-bold sm:text-2xl">Oyun Ayarı</h2>
             <p className="mb-4 text-center text-sm text-[hsl(var(--muted))] sm:text-base">
-              Harf sayısını seç, sonra oyuna başla.
+              Harf sayısını seç, sonra oyuna başla!
             </p>
             <div className="mb-4 flex justify-center gap-2">
               {WORD_LENGTH_OPTIONS.map((len) => (
