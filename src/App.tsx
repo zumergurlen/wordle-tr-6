@@ -203,8 +203,10 @@ export default function App() {
   const [customWord, setCustomWord] = useState("");
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [toastText, setToastText] = useState<string | null>(null);
+  const [pressedKey, setPressedKey] = useState<string | null>(null);
   const resultSavedRef = useRef(false);
   const toastTimeoutRef = useRef<number | null>(null);
+  const pressedKeyTimeoutRef = useRef<number | null>(null);
 
   const won = guesses.some((guess) => guess === targetWord);
   const lost = guesses.length >= MAX_GUESSES && !won;
@@ -333,6 +335,9 @@ export default function App() {
       if (toastTimeoutRef.current) {
         window.clearTimeout(toastTimeoutRef.current);
       }
+      if (pressedKeyTimeoutRef.current) {
+        window.clearTimeout(pressedKeyTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -404,6 +409,22 @@ export default function App() {
       return;
     }
     addLetter(key);
+  }
+
+  function showPressedKey(key: string) {
+    if (pressedKeyTimeoutRef.current) {
+      window.clearTimeout(pressedKeyTimeoutRef.current);
+    }
+    setPressedKey(key);
+  }
+
+  function clearPressedKey() {
+    if (pressedKeyTimeoutRef.current) {
+      window.clearTimeout(pressedKeyTimeoutRef.current);
+    }
+    pressedKeyTimeoutRef.current = window.setTimeout(() => {
+      setPressedKey(null);
+    }, 60);
   }
 
   function showToast(text: string) {
@@ -872,7 +893,7 @@ export default function App() {
           </div>
         </div>
         {TURKISH_KEYS.map((row, idx) => (
-          <div key={idx} className="flex w-full gap-1">
+          <div key={idx} className="flex w-full gap-1.5">
             {row.map((key) => {
               const state = keyStates.get(key) ?? "unknown";
               const isActionKey = key === "ENTER" || key === "SİL";
@@ -891,6 +912,12 @@ export default function App() {
                   key={key}
                   type="button"
                   onClick={() => handleVirtualKey(key)}
+                  onMouseDown={() => showPressedKey(key)}
+                  onMouseUp={clearPressedKey}
+                  onMouseLeave={clearPressedKey}
+                  onTouchStart={() => showPressedKey(key)}
+                  onTouchEnd={clearPressedKey}
+                  onTouchCancel={clearPressedKey}
                   style={{
                     minHeight: `${42 + scaleDelta * 8}px`,
                     flex: `${isActionKey ? 1.45 : 1} 1 0`,
@@ -898,8 +925,13 @@ export default function App() {
                     paddingInline: `${8 + scaleDelta * 8}px`,
                     paddingBlock: `${10 + scaleDelta * 2}px`,
                   }}
-                  className={`min-w-0 rounded text-center font-semibold leading-tight whitespace-pre-line transition duration-100 active:scale-95 active:brightness-75 ${color}`}
+                  className={`relative min-w-0 rounded-xl border border-zinc-700/70 text-center font-semibold leading-tight whitespace-pre-line shadow-[0_2px_0_rgba(0,0,0,0.35)] transition duration-100 active:scale-95 active:brightness-90 ${color}`}
                 >
+                  {pressedKey === key && (
+                    <span className="pointer-events-none absolute -top-12 left-1/2 z-20 flex h-11 min-w-[42px] -translate-x-1/2 items-center justify-center rounded-xl border border-zinc-500 bg-zinc-200 px-2 text-lg font-bold text-zinc-900 shadow-xl">
+                      {key === "ENTER" ? "⏎" : key}
+                    </span>
+                  )}
                   {keyLabel}
                 </button>
               );
