@@ -23,6 +23,7 @@ export type RoomSnapshot = {
   code: string;
   wordLength: number;
   targetWord: string;
+  hostId?: string;
 };
 
 const firebaseConfig = {
@@ -97,7 +98,7 @@ export async function createRoom(
     updatedAt: Date.now(),
   });
 
-  return { code, uid };
+  return { code, uid, hostId: uid };
 }
 
 export async function joinRoom(code: string, playerName: string) {
@@ -120,6 +121,7 @@ export async function joinRoom(code: string, playerName: string) {
   return {
     code,
     uid,
+    hostId: data.hostId ?? uid,
     wordLength: data.wordLength,
     targetWord: data.targetWord,
   };

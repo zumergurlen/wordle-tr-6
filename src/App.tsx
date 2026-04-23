@@ -43,6 +43,7 @@ type ConfettiPiece = {
 type RoomState = {
   code: string;
   uid: string;
+  hostId: string;
   wordLength: number;
   targetWord: string;
 };
@@ -165,6 +166,8 @@ export default function App() {
   const [loseImageHidden, setLoseImageHidden] = useState(false);
   const [playerName, setPlayerName] = useState("");
   const [roomCodeInput, setRoomCodeInput] = useState("");
+  const [hostCustomWordEnabled, setHostCustomWordEnabled] = useState(false);
+  const [hostCustomWord, setHostCustomWord] = useState("");
   const [room, setRoom] = useState<RoomState | null>(null);
   const [roomPlayers, setRoomPlayers] = useState<Array<{ id: string } & RoomParticipant>>([]);
   const realtimeEnabled = hasRealtimeConfig();
@@ -474,13 +477,27 @@ export default function App() {
       setMessage("Önce adını gir.");
       return;
     }
+    const customWord = normalize(hostCustomWord);
+    const adminWordRegex = new RegExp(`^[A-ZÇĞİIÖŞÜ]{${wordLength}}$`, "u");
+    if (hostCustomWordEnabled) {
+      if (customWord.length !== wordLength) {
+        setMessage(`Admin kelimesi ${wordLength} harf olmalı.`);
+        return;
+      }
+      if (!adminWordRegex.test(customWord)) {
+        setMessage("Admin kelimesi sadece harf içermeli.");
+        return;
+      }
+    }
     try {
-      const created = await createRoom(wordLength, targetWord, playerName.trim());
+      const roomWord = hostCustomWordEnabled ? customWord : targetWord;
+      const created = await createRoom(wordLength, roomWord, playerName.trim());
       setRoom({
         code: created.code,
         uid: created.uid,
+        hostId: created.hostId,
         wordLength,
-        targetWord,
+        targetWord: roomWord,
       });
       setRoomCodeInput(created.code);
       setHasStarted(true);
@@ -513,6 +530,7 @@ export default function App() {
       setRoom({
         code: joined.code,
         uid: joined.uid,
+        hostId: joined.hostId,
         wordLength: joined.wordLength,
         targetWord: joined.targetWord,
       });
@@ -536,6 +554,8 @@ export default function App() {
     setElapsedSeconds(0);
     setRoom(null);
     setRoomPlayers([]);
+    setHostCustomWord("");
+    setHostCustomWordEnabled(false);
     setLoseModalOpen(false);
     setConfettiPieces([]);
     resultSavedRef.current = false;
@@ -660,6 +680,23 @@ export default function App() {
               placeholder="Adın"
               className="mb-2 w-full rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-2 text-sm outline-none"
             />
+            <label className="mb-2 flex items-center gap-2 text-xs text-[hsl(var(--muted))]">
+              <input
+                type="checkbox"
+                checked={hostCustomWordEnabled}
+                onChange={(event) => setHostCustomWordEnabled(event.target.checked)}
+              />
+              Kelimeyi sen belirle (oda sahibi/admin)
+            </label>
+            {hostCustomWordEnabled && (
+              <input
+                value={hostCustomWord}
+                onChange={(event) => setHostCustomWord(event.target.value)}
+                maxLength={wordLength}
+                placeholder={`Admin kelimesi (${wordLength} harf)`}
+                className="mb-2 w-full rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-2 text-sm uppercase outline-none"
+              />
+            )}
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
@@ -752,7 +789,10 @@ export default function App() {
                 key={p.id}
                 className="flex items-center justify-between rounded bg-[hsl(var(--surface2))] px-2 py-1 text-xs"
               >
-                <span>{p.name || "Oyuncu"}</span>
+                <span>
+                  {p.name || "Oyuncu"}
+                  {p.id === room.hostId ? " (Admin)" : ""}
+                </span>
                 <span className="text-[hsl(var(--muted))]">
                   {p.solved ? `Çözdü • ${p.elapsedSeconds}s` : `${p.attempts} deneme`}
                 </span>
