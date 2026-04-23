@@ -8,21 +8,46 @@
       <stop offset="0%" stop-color="#06b6d4" />
       <stop offset="100%" stop-color="#3b82f6" />
     </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
   </defs>
   <rect width="180" height="180" rx="40" fill="url(#bg)" />
   <rect x="12" y="12" width="156" height="156" rx="32" fill="none" stroke="url(#accent)" stroke-width="5" opacity="0.7" />
-  <text
-    x="90"
-    y="109"
-    text-anchor="middle"
-    font-family="Inter, Segoe UI, system-ui, sans-serif"
-    font-size="58"
-    font-weight="800"
-    letter-spacing="-3"
-    fill="#e2e8f0"
-  >
-    ZG
-  </text>
+  <g transform="translate(7,0) skewX(-10)">
+    <text
+      x="90"
+      y="109"
+      text-anchor="middle"
+      font-family="Impact, Arial Black, Inter, system-ui, sans-serif"
+      font-size="58"
+      font-weight="900"
+      letter-spacing="-2"
+      fill="#22d3ee"
+      opacity="0.35"
+      filter="url(#glow)"
+    >
+      ZG
+    </text>
+    <text
+      x="90"
+      y="109"
+      text-anchor="middle"
+      font-family="Impact, Arial Black, Inter, system-ui, sans-serif"
+      font-size="58"
+      font-weight="900"
+      letter-spacing="-2"
+      fill="#e2e8f0"
+      stroke="#111827"
+      stroke-width="1.2"
+    >
+      ZG
+    </text>
+  </g>
   <circle cx="44" cy="44" r="7" fill="#06b6d4" opacity="0.9" />
   <circle cx="140" cy="140" r="6" fill="#3b82f6" opacity="0.9" />
 </svg>

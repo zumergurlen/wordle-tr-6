@@ -469,13 +469,13 @@ export default function App() {
         </div>
       )}
 
-      <header className="space-y-2 text-center">
-        <div className="flex items-center justify-between gap-2">
+      <header className="-mx-3 border-b border-zinc-800 bg-black/95 px-3 py-2 shadow-md sm:-mx-4 sm:px-4">
+        <div className="mx-auto flex w-full max-w-md items-center justify-between gap-2">
           {hasStarted ? (
             <button
               type="button"
               onClick={goBackHome}
-              className="rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] px-3 py-2 text-xs font-semibold"
+              className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-semibold text-zinc-100"
             >
               ← Geri
             </button>
@@ -483,7 +483,7 @@ export default function App() {
             <button
               type="button"
               onClick={() => setStatsOpen(true)}
-              className="rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] px-3 py-2 text-xs font-semibold"
+              className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-semibold text-zinc-100"
             >
               İstatistik
             </button>
@@ -495,12 +495,12 @@ export default function App() {
           <button
             type="button"
             onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
-            className="rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] px-3 py-2 text-xs font-semibold"
+            className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-semibold text-zinc-100"
           >
             {theme === "dark" ? "Light" : "Dark"}
           </button>
         </div>
-        <p className="text-xs text-[hsl(var(--muted))]">
+        <p className="mx-auto mt-1 w-full max-w-md text-center text-xs text-zinc-400">
           {challengeWord ? "Arkadaş meydan okuması" : "Günün kelimesi modu"}
         </p>
       </header>
