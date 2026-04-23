@@ -34,6 +34,7 @@ type GameStats = {
 
 const STATS_KEY = "wordle-tr6-stats";
 const THEME_KEY = "wordle-tr6-theme";
+const KB_SCALE_KEY = "wordle-tr6-keyboard-scale";
 
 const INITIAL_STATS: GameStats = {
   played: 0,
@@ -123,6 +124,12 @@ export default function App() {
       return INITIAL_STATS;
     }
   });
+  const [keyboardScale, setKeyboardScale] = useState<number>(() => {
+    const saved = localStorage.getItem(KB_SCALE_KEY);
+    const numeric = saved ? Number(saved) : NaN;
+    if (!Number.isNaN(numeric) && numeric >= 1 && numeric <= 1.5) return numeric;
+    return 1.12;
+  });
 
   const [statsOpen, setStatsOpen] = useState(false);
   const [challengeOpen, setChallengeOpen] = useState(false);
@@ -177,6 +184,10 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(STATS_KEY, JSON.stringify(stats));
   }, [stats]);
+
+  useEffect(() => {
+    localStorage.setItem(KB_SCALE_KEY, keyboardScale.toFixed(2));
+  }, [keyboardScale]);
 
   const board = useMemo(() => {
     const rows = [...guesses];
@@ -345,6 +356,14 @@ export default function App() {
     setWordLength(nextLen);
   }
 
+  function growKeyboard() {
+    setKeyboardScale((prev) => Math.min(1.5, Number((prev + 0.06).toFixed(2))));
+  }
+
+  function shrinkKeyboard() {
+    setKeyboardScale((prev) => Math.max(0.9, Number((prev - 0.06).toFixed(2))));
+  }
+
   function startGame() {
     setHasStarted(true);
     setGuesses([]);
@@ -455,6 +474,26 @@ export default function App() {
       </section>
 
       <section className="sticky bottom-0 z-10 space-y-2 rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))]/95 p-3 backdrop-blur">
+        <div className="mb-1 flex items-center justify-between text-xs">
+          <span className="text-[hsl(var(--muted))]">Klavye Boyutu</span>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={shrinkKeyboard}
+              className="rounded bg-[hsl(var(--surface2))] px-2 py-1 font-semibold"
+            >
+              -
+            </button>
+            <span className="w-10 text-center">{Math.round(keyboardScale * 100)}%</span>
+            <button
+              type="button"
+              onClick={growKeyboard}
+              className="rounded bg-[hsl(var(--surface2))] px-2 py-1 font-semibold"
+            >
+              +
+            </button>
+          </div>
+        </div>
         {TURKISH_KEYS.map((row, idx) => (
           <div key={idx} className="flex justify-center gap-1">
             {row.map((key) => {
@@ -472,7 +511,14 @@ export default function App() {
                   key={key}
                   type="button"
                   onClick={() => handleVirtualKey(key)}
-                  className={`min-h-11 rounded px-2 py-3 text-xs font-semibold active:scale-95 ${key === "ENTER" || key === "SİL" ? "min-w-14" : "min-w-7"} ${color}`}
+                  style={{
+                    minHeight: `${44 * keyboardScale}px`,
+                    minWidth: `${(key === "ENTER" || key === "SİL" ? 56 : 28) * keyboardScale}px`,
+                    fontSize: `${12 * keyboardScale}px`,
+                    paddingInline: `${8 * keyboardScale}px`,
+                    paddingBlock: `${10 * keyboardScale}px`,
+                  }}
+                  className={`rounded font-semibold active:scale-95 ${color}`}
                 >
                   {key}
                 </button>
