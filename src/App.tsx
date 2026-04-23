@@ -906,9 +906,7 @@ export default function App() {
                     ? "bg-yellow-600 text-white"
                     : state === "absent"
                       ? "bg-zinc-800 text-zinc-400"
-                      : isActionKey
-                        ? "bg-zinc-700 text-zinc-100"
-                        : "bg-zinc-500 text-white";
+                      : "bg-zinc-500 text-white";
               return (
                 <button
                   key={key}
@@ -927,7 +925,7 @@ export default function App() {
                     paddingInline: `${8 + scaleDelta * 8}px`,
                     paddingBlock: `${10 + scaleDelta * 2}px`,
                   }}
-                  className={`relative min-w-0 rounded-xl border border-zinc-700/70 text-center font-semibold leading-tight whitespace-pre-line shadow-[0_2px_0_rgba(0,0,0,0.35)] transition duration-100 active:scale-95 active:brightness-90 ${color}`}
+                  className={`relative inline-flex min-w-0 items-center justify-center rounded-xl border border-zinc-700/70 text-center font-semibold leading-tight whitespace-pre-line shadow-[0_2px_0_rgba(0,0,0,0.35)] transition duration-100 active:scale-95 active:brightness-90 ${color}`}
                 >
                   {pressedKey === key && (
                     <span
