@@ -163,6 +163,7 @@ export default function App() {
   const [currentGuess, setCurrentGuess] = useState("");
   const [message, setMessage] = useState(`${wordLength} harfli kelimeyi bul.`);
   const [customWord, setCustomWord] = useState("");
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const resultSavedRef = useRef(false);
 
   const won = guesses.some((guess) => guess === targetWord);
@@ -173,6 +174,7 @@ export default function App() {
     setMessage(`${wordLength} harfli kelimeyi bul.`);
     setGuesses([]);
     setCurrentGuess("");
+    setElapsedSeconds(0);
     resultSavedRef.current = false;
   }, [wordLength, targetWord]);
 
@@ -254,6 +256,14 @@ export default function App() {
       return next;
     });
   }, [finished, won, guesses.length]);
+
+  useEffect(() => {
+    if (!hasStarted || finished) return;
+    const timer = window.setInterval(() => {
+      setElapsedSeconds((prev) => prev + 1);
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [hasStarted, finished]);
 
   function addLetter(letter: string) {
     if (finished) return;
@@ -347,6 +357,7 @@ export default function App() {
   function restartGame() {
     setGuesses([]);
     setCurrentGuess("");
+    setElapsedSeconds(0);
     resultSavedRef.current = false;
     setMessage(`Yeni oyun basladi. ${wordLength} harfli kelimeyi bul.`);
   }
@@ -368,6 +379,7 @@ export default function App() {
     setHasStarted(true);
     setGuesses([]);
     setCurrentGuess("");
+    setElapsedSeconds(0);
     resultSavedRef.current = false;
     setMessage(`${wordLength} harfli kelimeyi bul.`);
   }
@@ -381,9 +393,14 @@ export default function App() {
     setChallengeOpen(false);
     setGuesses([]);
     setCurrentGuess("");
+    setElapsedSeconds(0);
     resultSavedRef.current = false;
     setMessage(`${wordLength} harfli kelimeyi bul.`);
   }
+
+  const timerText = `${String(Math.floor(elapsedSeconds / 60)).padStart(2, "0")}:${String(
+    elapsedSeconds % 60,
+  ).padStart(2, "0")}`;
 
   const winRate = stats.played ? Math.round((stats.wins / stats.played) * 100) : 0;
 
@@ -420,6 +437,9 @@ export default function App() {
         <p className="text-xs text-[hsl(var(--muted))]">
           {challengeWord ? "Arkadaş meydan okuması" : "Günün kelimesi modu"}
         </p>
+        {hasStarted && (
+          <p className="text-xs font-semibold text-cyan-400">Süre: {timerText}</p>
+        )}
       </header>
 
       {!hasStarted && !challengeWord && (
