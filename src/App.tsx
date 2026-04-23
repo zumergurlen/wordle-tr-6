@@ -553,7 +553,8 @@ export default function App() {
         <>
           <section className="rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-3 shadow-sm">
         <div className="mb-2 flex items-center justify-between">
-          <span className="rounded-full border border-cyan-500/40 bg-cyan-950/60 px-3 py-1 text-xs font-semibold text-cyan-300">
+          <span className="flex items-center gap-1 rounded-full border border-cyan-500/40 bg-cyan-950/60 px-3 py-1 text-xs font-semibold text-cyan-300">
+            <span aria-hidden="true">⏳</span>
             {timerText}
           </span>
           <span className="text-center text-sm text-emerald-500">{message}</span>
