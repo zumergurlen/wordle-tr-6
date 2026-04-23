@@ -86,20 +86,22 @@ button {
 }
 
 .reveal-pop {
-  animation: reveal-pop 180ms ease-out;
+  transform-origin: center;
+  backface-visibility: hidden;
+  animation: reveal-pop 320ms ease-out;
 }
 
 @keyframes reveal-pop {
   0% {
-    transform: scale(0.82);
-    filter: brightness(0.85);
+    transform: perspective(420px) rotateX(-90deg);
+    filter: brightness(0.82);
   }
-  70% {
-    transform: scale(1.06);
+  55% {
+    transform: perspective(420px) rotateX(12deg);
     filter: brightness(1.08);
   }
   100% {
-    transform: scale(1);
+    transform: perspective(420px) rotateX(0deg);
     filter: brightness(1);
   }
 }
