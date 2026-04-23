@@ -202,7 +202,9 @@ export default function App() {
   const [message, setMessage] = useState(`${wordLength} harfli kelimeyi bul.`);
   const [customWord, setCustomWord] = useState("");
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [toastText, setToastText] = useState<string | null>(null);
   const resultSavedRef = useRef(false);
+  const toastTimeoutRef = useRef<number | null>(null);
 
   const won = guesses.some((guess) => guess === targetWord);
   const lost = guesses.length >= MAX_GUESSES && !won;
@@ -327,6 +329,14 @@ export default function App() {
   }, [hasStarted, finished]);
 
   useEffect(() => {
+    return () => {
+      if (toastTimeoutRef.current) {
+        window.clearTimeout(toastTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (!room) return;
     return subscribePlayers(room.code, setRoomPlayers);
   }, [room]);
@@ -396,6 +406,16 @@ export default function App() {
     addLetter(key);
   }
 
+  function showToast(text: string) {
+    setToastText(text);
+    if (toastTimeoutRef.current) {
+      window.clearTimeout(toastTimeoutRef.current);
+    }
+    toastTimeoutRef.current = window.setTimeout(() => {
+      setToastText(null);
+    }, 1000);
+  }
+
   function shareResult() {
     const solvedAt = won ? guesses.findIndex((g) => g === targetWord) + 1 : null;
     const score = solvedAt ?? "X";
@@ -418,7 +438,7 @@ export default function App() {
       : `Deneme: ${guesses.length}/${MAX_GUESSES} | Süre: ${timerText}`;
     const text = `${header}\n${detailLine}\n\nTahminler:\n${guessesText}\n\n${rows}\n${window.location.href}`;
     navigator.clipboard.writeText(text).then(() => {
-      setMessage("Sonuç panoya kopyalandı.");
+      showToast("Sonuç panoya kopyalandı");
     });
   }
 
@@ -431,7 +451,7 @@ export default function App() {
     const encoded = encodeWord(word);
     const url = `${window.location.origin}${window.location.pathname}?challenge=${encoded}`;
     navigator.clipboard.writeText(url).then(() => {
-      setMessage("Meydan okuma linki panoya kopyalandı.");
+      showToast("Meydan okuma linki panoya kopyalandı");
       setChallengeOpen(false);
     });
   }
@@ -582,6 +602,13 @@ export default function App() {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-4 bg-[hsl(var(--bg))] px-3 pb-[max(env(safe-area-inset-bottom),12px)] pt-4 text-[hsl(var(--text))] sm:px-4">
+      {toastText && (
+        <div className="pointer-events-none fixed left-1/2 top-1/2 z-40 -translate-x-1/2 -translate-y-1/2">
+          <div className="rounded-full border border-emerald-400/40 bg-zinc-900/95 px-4 py-2 text-sm font-semibold text-emerald-300 shadow-lg">
+            {toastText}
+          </div>
+        </div>
+      )}
       {confettiPieces.length > 0 && (
         <div className="pointer-events-none fixed inset-0 z-30 overflow-hidden">
           {confettiPieces.map((piece) => (
