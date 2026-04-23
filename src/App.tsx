@@ -59,6 +59,8 @@ type GameStats = {
 const STATS_KEY = "wordle-tr6-stats";
 const THEME_KEY = "wordle-tr6-theme";
 const KB_SCALE_KEY = "wordle-tr6-keyboard-scale";
+const SOUND_KEY = "wordle-tr6-sound-enabled";
+const HAPTIC_KEY = "wordle-tr6-haptic-enabled";
 const KB_MIN = 1.0;
 const KB_MAX = 1.9;
 const KB_STEP = 0.08;
@@ -158,8 +160,21 @@ export default function App() {
     if (!Number.isNaN(numeric) && numeric >= KB_MIN && numeric <= KB_MAX) return numeric;
     return KB_DEFAULT;
   });
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
+    const saved = localStorage.getItem(SOUND_KEY);
+    if (saved === "true") return true;
+    if (saved === "false") return false;
+    return true;
+  });
+  const [hapticEnabled, setHapticEnabled] = useState<boolean>(() => {
+    const saved = localStorage.getItem(HAPTIC_KEY);
+    if (saved === "true") return true;
+    if (saved === "false") return false;
+    return true;
+  });
 
   const [statsOpen, setStatsOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [challengeOpen, setChallengeOpen] = useState(false);
   const [loseModalOpen, setLoseModalOpen] = useState(false);
@@ -208,6 +223,7 @@ export default function App() {
   const resultSavedRef = useRef(false);
   const toastTimeoutRef = useRef<number | null>(null);
   const pressedKeyTimeoutRef = useRef<number | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
 
   const won = guesses.some((guess) => guess === targetWord);
   const lost = guesses.length >= MAX_GUESSES && !won;
@@ -236,6 +252,14 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(KB_SCALE_KEY, keyboardScale.toFixed(2));
   }, [keyboardScale]);
+
+  useEffect(() => {
+    localStorage.setItem(SOUND_KEY, String(soundEnabled));
+  }, [soundEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem(HAPTIC_KEY, String(hapticEnabled));
+  }, [hapticEnabled]);
 
   const board = useMemo(() => {
     const rows = [...guesses];
@@ -401,6 +425,7 @@ export default function App() {
   }
 
   function handleVirtualKey(key: string) {
+    triggerKeyFeedback();
     if (key === "ENTER") {
       submitGuess();
       return;
@@ -410,6 +435,42 @@ export default function App() {
       return;
     }
     addLetter(key);
+  }
+
+  function triggerKeyFeedback() {
+    if (soundEnabled) {
+      try {
+        if (!audioContextRef.current) {
+          const AudioContextCtor =
+            window.AudioContext ||
+            ((window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext ??
+              null);
+          if (AudioContextCtor) {
+            audioContextRef.current = new AudioContextCtor();
+          }
+        }
+        const ctx = audioContextRef.current;
+        if (ctx) {
+          const oscillator = ctx.createOscillator();
+          const gain = ctx.createGain();
+          oscillator.type = "triangle";
+          oscillator.frequency.setValueAtTime(460, ctx.currentTime);
+          gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.018, ctx.currentTime + 0.01);
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.06);
+          oscillator.connect(gain);
+          gain.connect(ctx.destination);
+          oscillator.start();
+          oscillator.stop(ctx.currentTime + 0.065);
+        }
+      } catch {
+        // noop
+      }
+    }
+
+    if (hapticEnabled && "vibrate" in navigator) {
+      navigator.vibrate(8);
+    }
   }
 
   function showPressedKey(key: string) {
@@ -679,10 +740,12 @@ export default function App() {
           </h1>
           <button
             type="button"
-            onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
+            onClick={() => setSettingsOpen(true)}
+            aria-label="Ayarları aç"
+            title="Ayarlar"
             className="rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-2 text-xs font-semibold text-[hsl(var(--text))]"
           >
-            {theme === "dark" ? "Light" : "Dark"}
+            Ayarlar
           </button>
         </div>
         <p className="mx-auto mt-1 w-full max-w-md text-center text-xs text-zinc-400">
@@ -1092,6 +1155,65 @@ export default function App() {
                   <span className="w-6 text-right">{count}</span>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {settingsOpen && (
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-sm rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-lg font-bold">Ayarlar</h2>
+              <button
+                type="button"
+                onClick={() => setSettingsOpen(false)}
+                className="rounded bg-[hsl(var(--surface2))] px-3 py-1 text-sm"
+              >
+                Kapat
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <label className="flex items-center justify-between rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-3">
+                <div>
+                  <p className="text-sm font-semibold">Ses Efektleri</p>
+                  <p className="text-xs text-[hsl(var(--muted))]">Klavye tuş sesi</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={soundEnabled}
+                  onChange={(event) => setSoundEnabled(event.target.checked)}
+                  className="h-5 w-5 accent-emerald-500"
+                />
+              </label>
+
+              <label className="flex items-center justify-between rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-3">
+                <div>
+                  <p className="text-sm font-semibold">Titreşim</p>
+                  <p className="text-xs text-[hsl(var(--muted))]">Kısa dokunma titreşimi</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={hapticEnabled}
+                  onChange={(event) => setHapticEnabled(event.target.checked)}
+                  className="h-5 w-5 accent-emerald-500"
+                />
+              </label>
+
+              <label className="flex items-center justify-between rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-3">
+                <div>
+                  <p className="text-sm font-semibold">Tema</p>
+                  <p className="text-xs text-[hsl(var(--muted))]">Koyu / Açık</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
+                  className="rounded bg-[hsl(var(--surface))] px-3 py-1 text-xs font-semibold"
+                >
+                  {theme === "dark" ? "Koyu" : "Açık"}
+                </button>
+              </label>
             </div>
           </div>
         </div>
