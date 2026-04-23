@@ -425,7 +425,10 @@ export default function App() {
               İstatistik
             </button>
           )}
-          <h1 className="text-xl font-bold sm:text-2xl">KELİME OYUNU</h1>
+          <h1 className="flex items-center gap-2 text-xl font-bold sm:text-2xl">
+            <img src="/logo.svg" alt="Kelime Oyunu logosu" className="h-7 w-7 rounded-md" />
+            KELİME OYUNU
+          </h1>
           <button
             type="button"
             onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
@@ -437,9 +440,6 @@ export default function App() {
         <p className="text-xs text-[hsl(var(--muted))]">
           {challengeWord ? "Arkadaş meydan okuması" : "Günün kelimesi modu"}
         </p>
-        {hasStarted && (
-          <p className="text-xs font-semibold text-cyan-400">Süre: {timerText}</p>
-        )}
       </header>
 
       {!hasStarted && !challengeWord && (
@@ -477,7 +477,13 @@ export default function App() {
       {hasStarted && (
         <>
           <section className="rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-3 shadow-sm">
-        <p className="mb-2 text-center text-sm text-emerald-500">{message}</p>
+        <div className="mb-2 flex items-center justify-between">
+          <span className="rounded-full border border-cyan-500/40 bg-cyan-950/60 px-3 py-1 text-xs font-semibold text-cyan-300">
+            {timerText}
+          </span>
+          <span className="text-center text-sm text-emerald-500">{message}</span>
+          <span className="w-[62px]" />
+        </div>
         <div className="grid grid-rows-6 gap-2">
           {board.map((row, rowIdx) => {
             const states =
