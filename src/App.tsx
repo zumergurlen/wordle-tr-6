@@ -44,6 +44,10 @@ type GameStats = {
 const STATS_KEY = "wordle-tr6-stats";
 const THEME_KEY = "wordle-tr6-theme";
 const KB_SCALE_KEY = "wordle-tr6-keyboard-scale";
+const KB_MIN = 1.0;
+const KB_MAX = 1.9;
+const KB_STEP = 0.08;
+const KB_DEFAULT = 1.3;
 
 const INITIAL_STATS: GameStats = {
   played: 0,
@@ -136,8 +140,8 @@ export default function App() {
   const [keyboardScale, setKeyboardScale] = useState<number>(() => {
     const saved = localStorage.getItem(KB_SCALE_KEY);
     const numeric = saved ? Number(saved) : NaN;
-    if (!Number.isNaN(numeric) && numeric >= 1 && numeric <= 1.5) return numeric;
-    return 1.12;
+    if (!Number.isNaN(numeric) && numeric >= KB_MIN && numeric <= KB_MAX) return numeric;
+    return KB_DEFAULT;
   });
 
   const [statsOpen, setStatsOpen] = useState(false);
@@ -405,11 +409,11 @@ export default function App() {
   }
 
   function growKeyboard() {
-    setKeyboardScale((prev) => Math.min(1.5, Number((prev + 0.06).toFixed(2))));
+    setKeyboardScale((prev) => Math.min(KB_MAX, Number((prev + KB_STEP).toFixed(2))));
   }
 
   function shrinkKeyboard() {
-    setKeyboardScale((prev) => Math.max(0.9, Number((prev - 0.06).toFixed(2))));
+    setKeyboardScale((prev) => Math.max(KB_MIN, Number((prev - KB_STEP).toFixed(2))));
   }
 
   function startGame() {
@@ -620,10 +624,10 @@ export default function App() {
                   type="button"
                   onClick={() => handleVirtualKey(key)}
                   style={{
-                    minHeight: `${44 * keyboardScale}px`,
-                    minWidth: `${(key === "ENTER" || key === "SİL" ? 56 : 28) * keyboardScale}px`,
-                    fontSize: `${12 * keyboardScale}px`,
-                    paddingInline: `${8 * keyboardScale}px`,
+                    minHeight: `${48 * keyboardScale}px`,
+                    minWidth: `${(key === "ENTER" || key === "SİL" ? 62 : 32) * keyboardScale}px`,
+                    fontSize: `${13 * keyboardScale}px`,
+                    paddingInline: `${9 * keyboardScale}px`,
                     paddingBlock: `${10 * keyboardScale}px`,
                   }}
                   className={`rounded font-semibold active:scale-95 ${color}`}
