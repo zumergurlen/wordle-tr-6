@@ -1025,7 +1025,8 @@ export default function App() {
       )}
 
       <footer className="pb-2 text-center text-[11px] text-zinc-500">
-        Bağımsız Kelime Oyunu
+        <p>Bağımsız Kelime Oyunu</p>
+        <p className="text-[10px] opacity-90">Contact: zumerrgurlenn@gmail.com</p>
       </footer>
     </main>
   );
