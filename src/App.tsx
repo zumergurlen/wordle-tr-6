@@ -664,9 +664,11 @@ export default function App() {
             <button
               type="button"
               onClick={() => setStatsOpen(true)}
-              className="rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-2 text-xs font-semibold text-[hsl(var(--text))]"
+              aria-label="İstatistikleri aç"
+              title="İstatistikler"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] text-base font-bold text-[hsl(var(--text))]"
             >
-              İstatistik
+              ?
             </button>
           )}
           <h1 className="flex items-center gap-2 text-xl font-bold text-[hsl(var(--text))] sm:text-2xl">
