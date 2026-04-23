@@ -1,5 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { RAW_WORDS } from "./words";
+import {
+  createRoom,
+  hasRealtimeConfig,
+  joinRoom,
+  subscribePlayers,
+  updatePlayerProgress,
+  type RoomParticipant,
+} from "./realtime";
 
 const WORD_LENGTH_OPTIONS = [5, 6, 7, 8] as const;
 const MAX_GUESSES = 6;
@@ -31,6 +39,12 @@ type ConfettiPiece = {
   delay: number;
   duration: number;
   rotate: number;
+};
+type RoomState = {
+  code: string;
+  uid: string;
+  wordLength: number;
+  targetWord: string;
 };
 
 type GameStats = {
@@ -149,6 +163,11 @@ export default function App() {
   const [loseModalOpen, setLoseModalOpen] = useState(false);
   const [confettiPieces, setConfettiPieces] = useState<ConfettiPiece[]>([]);
   const [loseImageHidden, setLoseImageHidden] = useState(false);
+  const [playerName, setPlayerName] = useState("");
+  const [roomCodeInput, setRoomCodeInput] = useState("");
+  const [room, setRoom] = useState<RoomState | null>(null);
+  const [roomPlayers, setRoomPlayers] = useState<Array<{ id: string } & RoomParticipant>>([]);
+  const realtimeEnabled = hasRealtimeConfig();
   const challengeWord = useMemo(() => {
     const params = new URLSearchParams(window.location.search);
     const encoded = params.get("challenge");
@@ -169,7 +188,7 @@ export default function App() {
     () => WORDS_BY_LENGTH[wordLength] ?? WORDS_BY_LENGTH[6] ?? [],
     [wordLength],
   );
-  const targetWord = challengeWord ?? getDailyWord(dictionaryForLength);
+  const targetWord = room?.targetWord ?? challengeWord ?? getDailyWord(dictionaryForLength);
   const playableWords = useMemo(
     () => new Set([...(dictionaryForLength ?? []), targetWord]),
     [dictionaryForLength, targetWord],
@@ -304,6 +323,22 @@ export default function App() {
     return () => window.clearInterval(timer);
   }, [hasStarted, finished]);
 
+  useEffect(() => {
+    if (!room) return;
+    return subscribePlayers(room.code, setRoomPlayers);
+  }, [room]);
+
+  useEffect(() => {
+    if (!room || !hasStarted) return;
+    updatePlayerProgress(room.code, room.uid, {
+      attempts: guesses.length,
+      solved: won,
+      elapsedSeconds,
+    }).catch(() => {
+      // noop
+    });
+  }, [room, hasStarted, guesses.length, won, elapsedSeconds]);
+
   function addLetter(letter: string) {
     if (finished) return;
     if (currentGuess.length >= wordLength) return;
@@ -409,7 +444,7 @@ export default function App() {
   }
 
   function changeWordLength(nextLen: number) {
-    if (challengeWord) return;
+    if (challengeWord || room) return;
     setWordLength(nextLen);
   }
 
@@ -430,6 +465,65 @@ export default function App() {
     setMessage(`${wordLength} harfli kelimeyi bul.`);
   }
 
+  async function handleCreateRoom() {
+    if (!realtimeEnabled) {
+      setMessage("Canlı oda için Firebase ayarları eksik.");
+      return;
+    }
+    if (!playerName.trim()) {
+      setMessage("Önce adını gir.");
+      return;
+    }
+    try {
+      const created = await createRoom(wordLength, targetWord, playerName.trim());
+      setRoom({
+        code: created.code,
+        uid: created.uid,
+        wordLength,
+        targetWord,
+      });
+      setRoomCodeInput(created.code);
+      setHasStarted(true);
+      setMessage(`Canlı oda açıldı: ${created.code}`);
+    } catch {
+      setMessage("Canlı oda oluşturulamadı.");
+    }
+  }
+
+  async function handleJoinRoom() {
+    if (!realtimeEnabled) {
+      setMessage("Canlı oda için Firebase ayarları eksik.");
+      return;
+    }
+    if (!playerName.trim()) {
+      setMessage("Önce adını gir.");
+      return;
+    }
+    const code = roomCodeInput.trim().toUpperCase();
+    if (code.length < 4) {
+      setMessage("Geçerli oda kodu gir.");
+      return;
+    }
+    try {
+      const joined = await joinRoom(code, playerName.trim());
+      if (!joined) {
+        setMessage("Oda bulunamadı.");
+        return;
+      }
+      setRoom({
+        code: joined.code,
+        uid: joined.uid,
+        wordLength: joined.wordLength,
+        targetWord: joined.targetWord,
+      });
+      setWordLength(joined.wordLength);
+      setHasStarted(true);
+      setMessage(`Canlı odaya katıldın: ${joined.code}`);
+    } catch {
+      setMessage("Odaya katılınamadı.");
+    }
+  }
+
   function goBackHome() {
     if (challengeWord) {
       window.location.href = `${window.location.origin}${window.location.pathname}`;
@@ -440,6 +534,8 @@ export default function App() {
     setGuesses([]);
     setCurrentGuess("");
     setElapsedSeconds(0);
+    setRoom(null);
+    setRoomPlayers([]);
     setLoseModalOpen(false);
     setConfettiPieces([]);
     resultSavedRef.current = false;
@@ -506,47 +602,93 @@ export default function App() {
           </button>
         </div>
         <p className="mx-auto mt-1 w-full max-w-md text-center text-xs text-zinc-400">
-          {challengeWord ? "Arkadaş meydan okuması" : "Günün kelimesi modu"}
+          {room
+            ? `Canlı Oda: ${room.code}`
+            : challengeWord
+              ? "Arkadaş meydan okuması"
+              : "Günün kelimesi modu"}
         </p>
       </header>
 
       {!hasStarted && !challengeWord && (
-        <section className="rounded-2xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-5 shadow-sm sm:p-6">
-          <h2 className="mb-2 text-center text-xl font-bold sm:text-2xl">Oyun Ayarı</h2>
-          <p className="mb-4 text-center text-sm text-[hsl(var(--muted))] sm:text-base">
-            Harf sayısını seç, sonra oyuna başla.
-          </p>
-          <div className="mb-4 flex justify-center gap-2">
-            {WORD_LENGTH_OPTIONS.map((len) => (
+        <>
+          <section className="rounded-2xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-5 shadow-sm sm:p-6">
+            <h2 className="mb-2 text-center text-xl font-bold sm:text-2xl">Oyun Ayarı</h2>
+            <p className="mb-4 text-center text-sm text-[hsl(var(--muted))] sm:text-base">
+              Harf sayısını seç, sonra oyuna başla.
+            </p>
+            <div className="mb-4 flex justify-center gap-2">
+              {WORD_LENGTH_OPTIONS.map((len) => (
+                <button
+                  key={len}
+                  type="button"
+                  onClick={() => changeWordLength(len)}
+                  className={`rounded-lg px-4 py-2 text-sm font-semibold sm:text-base ${
+                    wordLength === len
+                      ? "bg-cyan-700 text-white"
+                      : "bg-[hsl(var(--surface2))] text-[hsl(var(--text))]"
+                  }`}
+                >
+                  {len} Harf
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={startGame}
+              className="w-full rounded-lg bg-emerald-600 px-4 py-3 text-base font-semibold text-white sm:py-4 sm:text-lg"
+            >
+              Günün Kelimesi
+            </button>
+            <button
+              type="button"
+              onClick={() => setChallengeOpen(true)}
+              className="mt-3 w-full rounded-lg bg-cyan-700 px-4 py-3 text-base font-semibold text-white sm:py-4 sm:text-lg"
+            >
+              Arkadaşına Meydan Oku
+            </button>
+          </section>
+
+          <section className="rounded-2xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-5 shadow-sm sm:p-6">
+            <h3 className="mb-2 text-center text-lg font-bold sm:text-xl">Canlı Oda (2-10 Kişi)</h3>
+            <p className="mb-3 text-center text-sm text-[hsl(var(--muted))]">
+              Adını gir, oda oluştur veya kodla katıl.
+            </p>
+            <input
+              value={playerName}
+              onChange={(event) => setPlayerName(event.target.value)}
+              placeholder="Adın"
+              className="mb-2 w-full rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-2 text-sm outline-none"
+            />
+            <div className="grid grid-cols-2 gap-2">
               <button
-                key={len}
                 type="button"
-                onClick={() => changeWordLength(len)}
-                className={`rounded-lg px-4 py-2 text-sm font-semibold sm:text-base ${
-                  wordLength === len
-                    ? "bg-cyan-700 text-white"
-                    : "bg-[hsl(var(--surface2))] text-[hsl(var(--text))]"
-                }`}
+                onClick={handleCreateRoom}
+                className="rounded-lg bg-violet-600 px-3 py-2 text-sm font-semibold text-white"
               >
-                {len} Harf
+                Oda Oluştur
               </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={startGame}
-            className="w-full rounded-lg bg-emerald-600 px-4 py-3 text-base font-semibold text-white sm:py-4 sm:text-lg"
-          >
-            Günün Kelimesi
-          </button>
-          <button
-            type="button"
-            onClick={() => setChallengeOpen(true)}
-            className="mt-3 w-full rounded-lg bg-cyan-700 px-4 py-3 text-base font-semibold text-white sm:py-4 sm:text-lg"
-          >
-            Arkadaşına Meydan Oku
-          </button>
-        </section>
+              <button
+                type="button"
+                onClick={handleJoinRoom}
+                className="rounded-lg bg-sky-700 px-3 py-2 text-sm font-semibold text-white"
+              >
+                Odaya Katıl
+              </button>
+            </div>
+            <input
+              value={roomCodeInput}
+              onChange={(event) => setRoomCodeInput(event.target.value.toUpperCase())}
+              placeholder="Oda Kodu (ör. A1B2C3)"
+              className="mt-2 w-full rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--surface2))] px-3 py-2 text-sm uppercase outline-none"
+            />
+            {!realtimeEnabled && (
+              <p className="mt-2 text-xs text-amber-400">
+                Firebase ENV tanımlanınca canlı oda aktif olur.
+              </p>
+            )}
+          </section>
+        </>
       )}
 
       {hasStarted && (
@@ -597,6 +739,28 @@ export default function App() {
           })}
         </div>
       </section>
+
+      {room && (
+        <section className="rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))] p-3">
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="text-sm font-bold">Canlı Oda: {room.code}</h3>
+            <span className="text-xs text-[hsl(var(--muted))]">{roomPlayers.length} oyuncu</span>
+          </div>
+          <div className="space-y-1">
+            {roomPlayers.map((p) => (
+              <div
+                key={p.id}
+                className="flex items-center justify-between rounded bg-[hsl(var(--surface2))] px-2 py-1 text-xs"
+              >
+                <span>{p.name || "Oyuncu"}</span>
+                <span className="text-[hsl(var(--muted))]">
+                  {p.solved ? `Çözdü • ${p.elapsedSeconds}s` : `${p.attempts} deneme`}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="sticky bottom-0 z-10 space-y-2 rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--surface))]/95 p-3 backdrop-blur">
         <div className="mb-1 flex items-center justify-between text-xs">
