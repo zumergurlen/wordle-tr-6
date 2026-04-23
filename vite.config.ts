@@ -25,9 +25,9 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg", "apple-touch-icon.svg"],
       manifest: {
-        name: "TSE Assistant",
-        short_name: "TSE",
-        description: "TSE standartları ve fabrika ölçü kayıtları — offline",
+        name: "Kelime Oyunu",
+        short_name: "Kelime Oyunu",
+        description: "Günün kelimesini bul, arkadaşlarınla canlı odada yarış.",
         theme_color: "#0a0a0a",
         background_color: "#0a0a0a",
         display: "standalone",

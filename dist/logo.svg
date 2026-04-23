@@ -1,9 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
   <defs>
-    <linearGradient id="borderGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#1E90FF" />
-      <stop offset="100%" stop-color="#00BFFF" />
-    </linearGradient>
     <filter id="containerShadow" x="-40%" y="-40%" width="180%" height="200%">
       <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="rgba(0,0,0,0.6)" />
     </filter>
@@ -22,17 +18,6 @@
   <rect width="256" height="256" fill="#0A0A0A" />
   <g filter="url(#containerShadow)">
     <rect x="16" y="16" width="224" height="224" rx="32" fill="#0A0A0A" />
-    <rect
-      x="16"
-      y="16"
-      width="224"
-      height="224"
-      rx="32"
-      fill="none"
-      stroke="url(#borderGrad)"
-      stroke-width="4"
-      opacity="0.8"
-    />
   </g>
   <text
     x="128"
@@ -40,7 +25,7 @@
     text-anchor="middle"
     dominant-baseline="middle"
     font-family="'Playfair Display', serif"
-    font-size="72"
+    font-size="110"
     font-weight="700"
     font-style="italic"
     letter-spacing="2"
@@ -51,11 +36,11 @@
   </text>
   <text
     x="128"
-    y="143"
+    y="147"
     text-anchor="middle"
     dominant-baseline="middle"
     font-family="'Playfair Display', serif"
-    font-size="72"
+    font-size="110"
     font-weight="700"
     font-style="italic"
     letter-spacing="2"
