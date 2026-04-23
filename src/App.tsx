@@ -925,7 +925,7 @@ export default function App() {
                     paddingInline: `${8 + scaleDelta * 8}px`,
                     paddingBlock: `${10 + scaleDelta * 2}px`,
                   }}
-                  className={`relative inline-flex min-w-0 items-center justify-center rounded-xl border border-zinc-700/70 text-center font-semibold leading-tight whitespace-pre-line shadow-[0_2px_0_rgba(0,0,0,0.35)] transition duration-100 active:scale-95 active:brightness-90 ${color}`}
+                  className={`relative inline-flex min-w-0 items-center justify-center rounded-md border border-zinc-600 text-center font-semibold leading-tight whitespace-pre-line shadow-none transition duration-100 active:scale-95 active:brightness-90 ${color}`}
                 >
                   {pressedKey === key && (
                     <span
