@@ -834,10 +834,12 @@ export default function App() {
                 </span>
                 <span className="text-[hsl(var(--muted))]">
                   {p.solved
-                    ? `${p.attempts}. deneme • ${Math.floor(p.elapsedSeconds / 60)}:${String(
+                    ? `${p.attempts}. Deneme • ${Math.floor(p.elapsedSeconds / 60)}:${String(
                         p.elapsedSeconds % 60,
                       ).padStart(2, "0")}`
-                    : `${p.attempts} deneme • çözmedi`}
+                    : p.attempts >= MAX_GUESSES
+                      ? `${MAX_GUESSES}. Deneme • Bilemedi`
+                      : `${p.attempts}. Deneme • Çözmedi`}
                 </span>
               </div>
             ))}
