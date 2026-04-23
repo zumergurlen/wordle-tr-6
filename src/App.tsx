@@ -1023,6 +1023,10 @@ export default function App() {
           </div>
         </div>
       )}
+
+      <footer className="pb-2 text-center text-[11px] text-zinc-500">
+        Bağımsız Kelime Oyunu
+      </footer>
     </main>
   );
 }
